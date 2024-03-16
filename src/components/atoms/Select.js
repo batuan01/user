@@ -12,7 +12,7 @@ export function Select({ selected, onChange, content }) {
           <div className="relative mt-2 w-full h-full">
             <Listbox.Button className="relative h-full cursor-default bg-inherit py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm border-t-0 border-x-0 border-b-[1px] border-solid border-black focus:outline-none sm:text-sm sm:leading-6 min-w-[150px] min-h-[40px] w-full hover:cursor-pointer">
               <span className="flex items-center">
-                <span className="ml-3 block truncate">{selected?.name}</span>
+                <span className="block truncate">{selected?.name}</span>
               </span>
               <span className="pointer-events-none absolute inset-y-0 right-0 ml-3 flex items-center pr-2">
                 {open ? (
@@ -68,7 +68,7 @@ export const pushData = ({ arrayForm, data }) => {
                 <span
                   className={classNames(
                     selected ? "font-semibold" : "font-normal",
-                    "ml-3 block truncate"
+                    "block truncate"
                   )}
                 >
                   {item.name}

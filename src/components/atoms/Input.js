@@ -4,7 +4,6 @@ export const InputQuantity = ({ quantity, setQuantity, maxQuantity }) => {
   const handleIncrement = () => {
     if (quantity < maxQuantity) {
       setQuantity(quantity + 1);
-      console.log(213);
     }
   };
 
@@ -13,12 +12,25 @@ export const InputQuantity = ({ quantity, setQuantity, maxQuantity }) => {
       setQuantity(quantity - 1);
     }
   };
+
+  const handleChange = (e) => {
+    if (e.target.value <= maxQuantity) {
+      const newValue = e.target.value.replace(/\D/g, '');
+      setQuantity(newValue);
+    }
+  };
   return (
     <div className="input_quantity">
       <button type="button" onClick={handleDecrement}>
         -
       </button>
-      <input type="number" value={quantity} readOnly max={10} />
+      <input
+        type="text"
+        inputMode="numeric"
+        pattern="[0-9]*"
+        onChange={handleChange}
+        value={quantity}
+      />
       <button type="button" onClick={handleIncrement}>
         +
       </button>

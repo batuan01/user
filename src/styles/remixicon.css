@@ -23,7 +23,7 @@
   --font-semi-bold: 600;
 
   /*========== z index ==========*/
-  --z-fixed: 100;
+  --z-fixed: 5;
   --z-modal: 1000;
 }
 

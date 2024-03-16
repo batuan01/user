@@ -50,10 +50,14 @@ export const Header = () => {
   const Signout = () => {
     Cookies.remove("token");
     Cookies.remove("id_customer");
-    router.reload();
+    router.push("/");
   };
   const Account = () => {
-    router.push("/");
+    if (storedIdCustomer) {
+      router.push("/account");
+    } else {
+      toggleLogin();
+    }
   };
 
   const clickCart = () => {
@@ -122,12 +126,6 @@ export const Header = () => {
     }
   }, [dataAll]);
 
-  const changeRole = () => {
-    localStorage.setItem("role", "admin");
-    router.reload();
-    router.push("/");
-  };
-
   return (
     <>
       <header className="header" id="header">
@@ -186,10 +184,6 @@ export const Header = () => {
 
           <div className="nav__actions">
             {/* Search button */}
-            <span onClick={changeRole} id="search-btn">
-              <FiSettings />
-            </span>
-
             <span onClick={toggleSearch} id="search-btn">
               <FaSearch />
             </span>

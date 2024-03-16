@@ -7,7 +7,7 @@ import { FormatDate } from "../atoms/FormatDate";
 import { useRouter } from "next/router";
 
 export const NewsForm = () => {
-  const { setBreadcrumb } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad } = useContext(AuthContext);
   const [dataNews, setDataNews] = useState();
   const router = useRouter();
   useEffect(() => {
@@ -18,6 +18,7 @@ export const NewsForm = () => {
     const fetch = async () => {
       const data = await GetAllNews();
       setDataNews(data);
+      setLoad(false);
     };
 
     fetch();
@@ -26,7 +27,6 @@ export const NewsForm = () => {
     <div className="content-wrapper">
       {dataNews?.data.map((item, index) => (
         <div className="news-card" key={index}>
-          <a href="#" className="news-card__card-link"></a>
           <img src={item.news_image} alt="" className="news-card__image" />
           <div className="news-card__text-wrapper  w-full">
             <h2 className="news-card__title">{item.news_name}</h2>

@@ -17,6 +17,7 @@ const nextConfig = {
     GO_HOST: process.env.GO_HOST,
     SIGNUP_POINT_ID: process.env.SIGNUP_POINT_ID,
   },
+  reactStrictMode: false,
   async headers() {
     return [
       {

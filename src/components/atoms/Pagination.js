@@ -26,6 +26,7 @@ const Pagination = ({ total, paginationPage, setPaginationPage }) => {
         <p data-page="-1" className="cdp_i" onClick={handlePageClick}>
           prev
         </p>
+        ưer
         {page && [...Array(page).keys()]?.map((index) => (
           <p
             data-page={index + 1}

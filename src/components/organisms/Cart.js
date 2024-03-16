@@ -29,7 +29,7 @@ export const Cart = () => {
   const [quantity, setQuantity] = useState();
   const [isCheckout, setIsCheckout] = useState(false);
   const [loading, setLoading] = useState(true);
-  const { setBreadcrumb } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad } = useContext(AuthContext);
   const [isBill, setIsBill] = useState(false);
 
   const router = useRouter();
@@ -56,7 +56,7 @@ export const Cart = () => {
     const fetchCart = async () => {
       const dataCart = await ListCarts({ id: IdCustomer });
       setIsListProduct(dataCart);
-      setLoading(false);
+      setLoad(false);
     };
     if (IdCustomer) {
       fetchCart();
@@ -163,102 +163,95 @@ export const Cart = () => {
 
   return (
     <>
-      {loading ? (
-        <LoadingAllPage isOpen={loading} setIsOpen={setLoading} />
-      ) : (
-        !isBill &&
-        !isCheckout &&
-        isListProduct?.data?.length > 0 && (
-          <form onSubmit={handleSubmit(onSubmit)} className="block">
-            <div className="px-[5rem] py-10 grid lg:grid-cols-10">
-              <div
-                className=" bg-white p-10 lg:col-span-7 shadow-2xl"
-                style={{ borderRadius: "20px 0 0 20px" }}
-              >
-                <div className="flex items-center justify-between pb-10 mb-3 border-b-2">
-                  <p className="font-bold text-3xl">Shopping Cart</p>
-                  <p>{arraySum} sản phẩm</p>
-                </div>
-                {isListProduct?.data?.map((item, index) => {
-                  // lấy ra quantity với màu đã chọn
-                  const quantityColor = item?.product_colors?.find(
-                    (item) => item.color_id === item.color_id
-                  )?.quantity;
-                  
-                  return (
-                    <div
-                      className="flex items-center justify-between gap-5 my-5"
-                      key={index}
-                    >
-                      <img
-                        className="w-16 h-16"
-                        src={item.product_detail.product_image}
-                      />
-                      <div className="w-[50%]">
-                        <p className="text-black font-semibold">
-                          {TruncateText(item.product_detail.product_name, 70)}
-                        </p>
-                        <p className="text-[#8e8e8e] font-bold text-xs pb-1">
-                          {getColorName(item.color_id)}
-                        </p>
-                      </div>
-                      <InputQuantity
-                        quantity={item.product_quantity}
-                        setQuantity={(newQuantity) =>
-                          handleQuantityChange(index, newQuantity)
-                        }
-                        maxQuantity={quantityColor}
-                      />
-
-                      <p>
-                        {FormatPrice(
-                          item.product_detail.product_price -
-                            (item.product_detail.product_price *
-                              item.product_detail.product_sale) /
-                              100
-                        )}
-                      </p>
-                      <div
-                        className="cursor-pointer p-3 rounded-full hover:bg-orange hover:text-white"
-                        onClick={() => deleteProduct(item.product_id)}
-                      >
-                        <CgClose />
-                      </div>
-                    </div>
-                  );
-                })}
-                <div className="flex justify-end items-end pt-5">
-                  <Button
-                    title={"UPDATE QUANTITY"}
-                    type={"button"}
-                    onClick={handleQuantity}
-                  />
-                </div>
+      {!isBill && !isCheckout && isListProduct?.data?.length > 0 && (
+        <form onSubmit={handleSubmit(onSubmit)} className="block">
+          <div className="px-[5rem] py-10 grid lg:grid-cols-10">
+            <div
+              className=" bg-white p-10 lg:col-span-7 shadow-2xl"
+              style={{ borderRadius: "20px 0 0 20px" }}
+            >
+              <div className="flex items-center justify-between pb-10 mb-3 border-b-2">
+                <p className="font-bold text-3xl">Shopping Cart</p>
+                <p>{arraySum} sản phẩm</p>
               </div>
-              <div
-                className=" bg-[#ddd] p-10 lg:col-span-3 shadow-2xl"
-                style={{ borderRadius: "0 20px 20px 0" }}
-              >
-                <div className="pb-10 mb-3 border-b-2">
-                  <p className="font-bold text-3xl">Summary</p>
-                </div>
-                <div className="border-b-2 pb-5 border-[#bdbdbd]">
-                  <p className="text-sm font-semibold my-3">GIVE CODE</p>
-                  <input type="text" className="w-full p-2" />
-                </div>
-                <div className="flex justify-between my-3 items-center text-sm font-semibold">
-                  <p className="">TOTAL PRICE</p>
-                  <p>{FormatPrice(total)}</p>
-                </div>
-                <div className="flex justify-center pt-5">
-                  <Button title={"CHECKOUT"} type={"submit"} />
-                </div>
+              {isListProduct?.data?.map((item, index) => {
+                // lấy ra quantity với màu đã chọn
+                const quantityColor = item?.product_colors?.find(
+                  (item) => item.color_id === item.color_id
+                )?.quantity;
+
+                return (
+                  <div
+                    className="flex items-center justify-between gap-5 my-5"
+                    key={index}
+                  >
+                    <img
+                      className="w-16 h-16"
+                      src={item.product_detail.product_image}
+                    />
+                    <div className="w-[50%]">
+                      <p className="text-black font-semibold">
+                        {TruncateText(item.product_detail.product_name, 70)}
+                      </p>
+                      <p className="text-[#8e8e8e] font-bold text-xs pb-1">
+                        {getColorName(item.color_id)}
+                      </p>
+                    </div>
+                    <InputQuantity
+                      quantity={item.product_quantity}
+                      setQuantity={(newQuantity) =>
+                        handleQuantityChange(index, newQuantity)
+                      }
+                      maxQuantity={quantityColor}
+                    />
+
+                    <p>
+                      {FormatPrice(
+                        item.product_detail.product_price -
+                          (item.product_detail.product_price *
+                            item.product_detail.product_sale) /
+                            100
+                      )}
+                    </p>
+                    <div
+                      className="cursor-pointer p-3 rounded-full hover:bg-orange hover:text-white"
+                      onClick={() => deleteProduct(item.product_id)}
+                    >
+                      <CgClose />
+                    </div>
+                  </div>
+                );
+              })}
+              <div className="flex justify-end items-end pt-5">
+                <Button
+                  title={"UPDATE QUANTITY"}
+                  type={"button"}
+                  onClick={handleQuantity}
+                />
               </div>
             </div>
-          </form>
-        )
+            <div
+              className=" bg-[#ddd] p-10 lg:col-span-3 shadow-2xl"
+              style={{ borderRadius: "0 20px 20px 0" }}
+            >
+              <div className="pb-10 mb-3 border-b-2">
+                <p className="font-bold text-3xl">Summary</p>
+              </div>
+              <div className="border-b-2 pb-5 border-[#bdbdbd]">
+                <p className="text-sm font-semibold my-3">GIVE CODE</p>
+                <input type="text" className="w-full p-2" />
+              </div>
+              <div className="flex justify-between my-3 items-center text-sm font-semibold">
+                <p className="">TOTAL PRICE</p>
+                <p>{FormatPrice(total)}</p>
+              </div>
+              <div className="flex justify-center pt-5">
+                <Button title={"CHECKOUT"} type={"submit"} />
+              </div>
+            </div>
+          </div>
+        </form>
       )}
-      {}
 
       {!isBill && !isCheckout && isListProduct?.data?.length === 0 && (
         <>
@@ -281,7 +274,7 @@ export const Cart = () => {
 
       {isBill ? (
         <div className="flex justify-center w-full">
-          <div className="min-w-[500px] border-t-8 border-solid border-blue-400 p-5 rounded-lg">
+          <div className="min-w-[500px] border-t-8 border-solid border-blue-400 p-5 rounded-lg bg-slate-200 my-10">
             <div className="flex justify-between">
               <div className="flex gap-4 items-center">
                 <img

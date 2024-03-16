@@ -81,9 +81,7 @@ const CheckIcon = () => {
         id="SVGRepo_tracerCarrier"
       ></g>
       <g id="SVGRepo_iconCarrier">
-        {" "}
         <g id="Interface / Check">
-          {" "}
           <path
             strokeLinejoin="round"
             strokeLinecap="round"

@@ -7,7 +7,6 @@ import { ProductContext } from "../contexts/ProductContext";
 
 import { Loading } from "../atoms/Loading";
 import { FormatPrice } from "../atoms/FormatPrice";
-import axios from "axios";
 import Cookies from "js-cookie";
 import Pagination from "../atoms/Pagination";
 import { Select, pushData } from "../atoms/Select";
@@ -143,7 +142,7 @@ export const ListProductHome = () => {
       <div className="flex justify-between items-center py-10">
         <p className="text-xl font-bold">SẢN PHẨM HOT</p>
         <Link href="/product">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer">
             <p>Xem tất cả </p>
             <div className="arrow_right">
               <FaAngleDoubleRight />
@@ -166,7 +165,7 @@ export const ListProductHome = () => {
       <div className="flex justify-between items-center py-10">
         <p className="text-xl font-bold">SẢN PHẨM NỔI BẬT</p>
         <Link href="/product">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 cursor-pointer">
             <p>Xem tất cả </p>
             <div className="arrow_right">
               <FaAngleDoubleRight />
@@ -191,22 +190,19 @@ export const ListProductHome = () => {
 
 export const AllProducts = ({ category }) => {
   const [dataAll, setDataAll] = useState();
-  const [loading, setLoading] = useState(true);
   const [selectedSort, setSelectedSort] = useState(null);
-  const searchParams = useSearchParams();
-  const { id } = router.query;
-  const { setBreadcrumb } = useContext(AuthContext);
+  const router = useRouter();
+  const params = router.query;
+  const { setBreadcrumb, setLoad } = useContext(AuthContext);
 
-  const [paginationPage, setPaginationPage] = useState(
-    searchParams.get("page") ?? 1
-  );
+  const [paginationPage, setPaginationPage] = useState(params.page ?? 1);
 
   useEffect(() => {
     const fetchDataAllProduct = async () => {
       try {
         const result = await ListProducts({ page: paginationPage });
         setDataAll(result);
-        setLoading(false);
+        setLoad(false);
         setBreadcrumb("All Products");
       } catch (error) {
         console.error("Error fetching data:", error);
@@ -221,17 +217,17 @@ export const AllProducts = ({ category }) => {
       try {
         const result = await ListProductsByCategory({ params });
         setDataAll(result);
-        setLoading(false);
+        setLoad(false);
         setBreadcrumb(result?.category_name);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
 
-    if (category) {
+    if (category && params.id) {
       fetchDataByCategory();
     }
-  }, [paginationPage]);
+  }, [paginationPage, params.id]);
 
   const dataSelect = [{ name: "Sắp xếp từ A-Z" }, { name: "Sắp xếp từ Z_A" }];
 
@@ -257,29 +253,21 @@ export const AllProducts = ({ category }) => {
         </div>
       </div>
 
-      {loading ? (
-        <div className="h-[50vh] flex items-center justify-center">
-          <Loading />
-        </div>
-      ) : (
+      {dataAll?.data.data?.length > 0 ? (
         <>
-          {dataAll?.data.data?.length > 0 ? (
-            <>
-              <ul className="cards">
-                {dataAll?.data?.data.map((item, index) => (
-                  <Product data={item} key={index} />
-                ))}
-              </ul>
-              <Pagination
-                total={dataAll?.data?.total}
-                paginationPage={paginationPage}
-                setPaginationPage={setPaginationPage}
-              />
-            </>
-          ) : (
-            <center className="h-40">No Products</center>
-          )}
+          <ul className="cards">
+            {dataAll?.data?.data.map((item, index) => (
+              <Product data={item} key={index} />
+            ))}
+          </ul>
+          <Pagination
+            total={dataAll?.data?.total}
+            paginationPage={paginationPage}
+            setPaginationPage={setPaginationPage}
+          />
         </>
+      ) : (
+        <center className="h-40">No Products</center>
       )}
     </>
   );
@@ -287,27 +275,27 @@ export const AllProducts = ({ category }) => {
 
 export const AllSearchProducts = ({}) => {
   const [dataAll, setDataAll] = useState();
-  const [loading, setLoading] = useState(true);
-  const { setBreadcrumb } = useContext(AuthContext);
-
-  const searchParams = useSearchParams();
-
-  const search = searchParams.get("keyword");
+  const { setBreadcrumb, setLoad } = useContext(AuthContext);
+  const router = useRouter();
+  const params = router.query;
+  const search = params.keyword;
+  console.log(search);
 
   useEffect(() => {
     const fetchDataSearchProduct = async () => {
       try {
         const result = await GetProductSearch({ product_name: search });
         setDataAll(result);
-        setLoading(false);
+        setLoad(false);
         setBreadcrumb("Search");
       } catch (error) {
         console.error("Error fetching data:", error);
       }
     };
-
-    fetchDataSearchProduct();
-  }, []);
+    if (search) {
+      fetchDataSearchProduct();
+    }
+  }, [search]);
   return (
     <>
       <div className="py-10">
@@ -320,26 +308,18 @@ export const AllSearchProducts = ({}) => {
         </p>
       </div>
 
-      {loading ? (
-        <div className="h-[50vh] flex items-center justify-center">
-          <Loading />
-        </div>
-      ) : (
+      {dataAll?.data?.length > 0 ? (
         <>
-          {dataAll.data?.length > 0 ? (
-            <>
-              <ul className="cards">
-                {dataAll?.data.map((item, index) => (
-                  <Product data={item} key={index} />
-                ))}
-              </ul>
-            </>
-          ) : (
-            <div className="h-40">
-              <center>No Products</center>
-            </div>
-          )}
+          <ul className="cards">
+            {dataAll?.data.map((item, index) => (
+              <Product data={item} key={index} />
+            ))}
+          </ul>
         </>
+      ) : (
+        <div className="h-40">
+          <center>No Products</center>
+        </div>
       )}
     </>
   );

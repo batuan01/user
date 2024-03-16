@@ -4,7 +4,7 @@ import { AuthContext } from "../contexts/AuthContext";
 import { useRouter } from "next/router";
 
 export const NewsDetail = () => {
-  const { setBreadcrumb } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad } = useContext(AuthContext);
   useEffect(() => {
     setBreadcrumb("News");
   }, []);
@@ -18,6 +18,7 @@ export const NewsDetail = () => {
     const fetch = async () => {
       const data = await GetNewsDetail({ news_id: id });
       setDataNews(data);
+      setLoad(false);
     };
 
     fetch();

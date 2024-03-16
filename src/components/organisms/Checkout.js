@@ -75,7 +75,6 @@ export const CheckoutForm = ({
     if (currentStep === 3) {
       return;
     }
-
     setCurrentStep(currentStep + 1);
   };
 
@@ -83,7 +82,6 @@ export const CheckoutForm = ({
     if (currentStep === 1) {
       return;
     }
-
     setCurrentStep(currentStep - 1);
   };
 
