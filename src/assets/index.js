@@ -41,6 +41,8 @@ const SERVICES = {
   signupCustomer: (payload) => mainRequest(`/customer/`, payload, "post"),
   getCustomerDetail: (payload) =>
     mainRequest(`/customer/detail/${payload.customer_id}/`, payload, "get"),
+  updateCustomer: (payload) =>
+    mainRequest(`/customer/${payload.customer_id}/`, payload, "put"),
 
   /* <PRODUCTS> */
   getProducts: (payload) => mainRequest(`/allproducts/`, payload, "get"),
@@ -88,6 +90,7 @@ const SERVICES = {
 
   /* <ORDER> */
   postOrderProduct: (payload) => mainRequest(`/order/`, payload, "post"),
+  getOrderProduct: (payload) => mainRequest(`/order/${payload.customer_id}/`, payload, "get"),
 
   /* <GALLERY> */
   getGalleries: (payload) =>

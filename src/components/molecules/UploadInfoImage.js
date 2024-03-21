@@ -50,22 +50,41 @@ export const UploadInfoImage = ({ name, selectedFiles, setSelectedFiles }) => {
     });
   };
 
+  function isLink(value) {
+    const urlPattern = /^(?:\w+:)?\/\/([^\s.]+\.\S{2}|localhost[:?\d]*)\S*$/;
+    return urlPattern.test(value);
+  }
+
+  let imgSrc;
+
+  if (isLink(selectedFiles[0])) {
+    imgSrc = selectedFiles[0];
+  } else {
+    if (selectedFiles[0] && typeof selectedFiles[0] === "object") {
+      imgSrc = URL.createObjectURL(selectedFiles[0]);
+    } else {
+      imgSrc =
+        "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg";
+    }
+  }
+
   return (
     <>
-      <div {...getRootProps()} className="cursor-pointer w-full h-full">
+      <div
+        {...getRootProps()}
+        className="cursor-pointer w-full h-full flex justify-center items-center flex-col"
+      >
         <input {...getInputProps()} />
-        <div className="flex justify-center items-center text-center text-9xl p-5 rounded bg-slate-200 w-full h-full">
-          {selectedFiles.length > 0 ? (
-            <img
-              src={URL.createObjectURL(selectedFiles[0])}
-              className="h-auto w-auto"
-            />
-          ) : (
-            <FaImage />
-          )}
+        <div className="flex justify-center items-center text-center text-9xl rounded-full bg-slate-200 w-32 h-32">
+          <img
+            src={imgSrc}
+            className="h-full w-full object-cover rounded-full"
+          />
         </div>
+        <p className="text-[#5c677e] font-medium text-sm pb-2 text-center mt-2">
+          {name}
+        </p>
       </div>
-      <p className="text-[#5c677e] font-medium text-sm pb-2 text-center mt-2">{name}</p>
     </>
   );
 };

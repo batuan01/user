@@ -45,6 +45,18 @@ export const GetCustomerDetail = async (payload) => {
     console.error("Lỗi khi gọi API:", error);
   }
 };
+export const UpdateCustomer = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.updateCustomer(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};
 
 /* <PRODUCTS> */
 export const ListProducts = async (payload) => {
@@ -264,6 +276,18 @@ export const ListWards = async (payload) => {
 export const OrderProduct = async (payload) => {
   try {
     const { data, status } = await SERVICES.postOrderProduct(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};
+export const GetOrderProduct = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getOrderProduct(payload);
     if (status === 200) {
       return data;
     } else {
