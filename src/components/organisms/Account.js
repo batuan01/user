@@ -93,7 +93,7 @@ export const Account = () => {
   const listProduct = ({ data }) => {
     return (
       <>
-        <div className="flex items-center justify-between  p-5 bg-[#f2e8e8]">
+        <div className="flex items-center justify-between  p-5 bg-[#f2e8e8] hover:shadow-lg hover:scale-[10]">
           <div className="flex gap-4">
             <img
               src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTFz6ITuCujVMoiuvRoLEQyHVwXFHkfqtWSMe5wU9783RN_v7DS7T-Pk_VDpVSK3qlwTBGJQrbdHpQ8L2EWFkXJSJdAevX2AmcATX41O-wGG94SCZ0gz1O6XHv1vmCikozSnb9BJ2bhiw&usqp=CAc"
