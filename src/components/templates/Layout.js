@@ -1,8 +1,5 @@
 import { Footer } from "./Footer";
 import { Header } from "./Header";
-import "react-toastify/dist/ReactToastify.css";
-import { ToastContainer } from "react-toastify";
-import { AuthProvider } from "../contexts/AuthContext";
 import { useRouter } from "next/router";
 
 export const Layout = ({ children }) => {
@@ -12,18 +9,15 @@ export const Layout = ({ children }) => {
   const whiteList = ["/signin"];
   return (
     <>
-      <AuthProvider>
-        <ToastContainer />
-        {!whiteList.includes(pathname) ? (
-          <>
-            <Header />
-            {children}
-            <Footer />
-          </>
-        ) : (
-          <>{children}</>
-        )}
-      </AuthProvider>
+      {!whiteList.includes(pathname) ? (
+        <>
+          <Header />
+          {children}
+          <Footer />
+        </>
+      ) : (
+        <>{children}</>
+      )}
     </>
   );
 };

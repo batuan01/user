@@ -6,6 +6,7 @@ import "../styles/product.css";
 import "../styles/header.css";
 import "../styles/news.css";
 import "../styles/pagination.css";
+import "react-toastify/dist/ReactToastify.css";
 
 import { ToastContainer } from "react-toastify";
 import { AuthProvider } from "../components/contexts/AuthContext";
