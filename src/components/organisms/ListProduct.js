@@ -14,6 +14,7 @@ import Notification from "../atoms/Notification";
 import { AuthContext } from "../contexts/AuthContext";
 import {
   BuyProduct,
+  GetProductLatests,
   GetProductSearch,
   ListProducts,
   ListProductsByCategory,
@@ -22,6 +23,10 @@ import { useRouter } from "next/router";
 
 const Product = ({ data }) => {
   const router = useRouter();
+  const filteredDataColor = data.product_colors.filter(
+    (item) => item.quantity > 0
+  );
+
   const handleBuyNow = async () => {
     try {
       const storedIdCustomer = Cookies.get("id_customer");
@@ -32,7 +37,7 @@ const Product = ({ data }) => {
           products: [
             {
               product_id: data.product_id,
-              color_id: data?.product_colors[0].color_id,
+              color_id: filteredDataColor[0].color_id,
               product_quantity: 1,
             },
           ],
@@ -43,7 +48,6 @@ const Product = ({ data }) => {
       } else {
         Notification.error("Please log in to purchase!");
       }
-      // router.push("/?product=" + data.product_id);
     } catch (err) {
       console.log(err);
     }
@@ -65,26 +69,28 @@ const Product = ({ data }) => {
               <path />
             </svg>
 
-            <div className="card__header-text">
+            <div className="card__header-text w-full">
               <h3 className="card__title">
                 <Link href={"/product/" + data.product_id}>
                   {TruncateText(data.product_name, 70)}
                 </Link>
               </h3>
-              {data.product_sale ? (
+              {data.product_sale || data.product_sale > 0 ? (
                 <>
-                  <del>{FormatPrice(data.product_price)}</del>
+                  <del>{FormatPrice(filteredDataColor[0].product_price)}</del>
                   <p className="card__status">
                     {FormatPrice(
-                      data.product_price -
-                        (data.product_price * data.product_sale) / 100
+                      filteredDataColor[0].product_price -
+                        (filteredDataColor[0].product_price *
+                          data.product_sale) /
+                          100
                     )}
                   </p>
                 </>
               ) : (
                 <>
                   <p className="card__status">
-                    {FormatPrice(data.product_price)}
+                    {FormatPrice(filteredDataColor[0].product_price)}
                   </p>
                 </>
               )}
@@ -126,7 +132,7 @@ export const ListProductHome = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const result = await ListProducts();
+        const result = await GetProductLatests();
         setDataAll(result);
         setLoading(false);
       } catch (error) {
@@ -156,7 +162,7 @@ export const ListProductHome = () => {
         </div>
       ) : (
         <ul className="cards">
-          {dataAll?.data?.data.map((item, index) => (
+          {dataAll?.data?.map((item, index) => (
             <Product data={item} key={index} />
           ))}
         </ul>
@@ -179,7 +185,7 @@ export const ListProductHome = () => {
         </div>
       ) : (
         <ul className="cards">
-          {dataAll?.data?.data.map((item, index) => (
+          {dataAll?.data?.map((item, index) => (
             <Product data={item} key={index} />
           ))}
         </ul>

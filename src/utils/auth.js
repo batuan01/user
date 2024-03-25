@@ -356,3 +356,16 @@ export const GetAllCoupon = async (payload) => {
     console.error("Lỗi khi gọi API:", error);
   }
 };
+
+export const GetCouponBycode = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getCouponBycode(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};

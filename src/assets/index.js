@@ -103,6 +103,7 @@ const SERVICES = {
 
   /* <COUPON> */
   getAllCoupon: (payload) => mainRequest(`/allCoupon/`, payload, "get"),
+  getCouponBycode: (payload) => mainRequest(`/couponByCode/`, payload, "get"),
 };
 
 export default SERVICES;

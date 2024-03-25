@@ -1,6 +1,6 @@
 import { CgClose } from "react-icons/cg";
 import { TruncateText } from "../atoms/TruncateText";
-import { Button } from "../atoms/Button";
+import { Button, ButtonModal } from "../atoms/Button";
 import { useContext, useEffect, useState } from "react";
 import { ProductContext } from "../contexts/ProductContext";
 import { InputQuantity } from "../atoms/Input";
@@ -16,6 +16,7 @@ import { LoadingAllPage } from "../atoms/Loading";
 import {
   DeleteAllProductCart,
   DeleteProductCart,
+  GetCouponBycode,
   ListCarts,
   OrderProduct,
   UpdateProductCart,
@@ -31,6 +32,8 @@ export const Cart = () => {
   const [loading, setLoading] = useState(true);
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
   const [isBill, setIsBill] = useState(false);
+  const [dataInputCoupon, setDataInputCoupon] = useState();
+  const [dataCoupon, setDataCoupon] = useState(0);
 
   const router = useRouter();
   const storedIdCustomer = Cookies.get("id_customer");
@@ -68,16 +71,25 @@ export const Cart = () => {
     ?.map((item, index) => item.product_quantity)
     .reduce((acc, current) => acc + current, 0);
   //total money
-  const total = isListProduct?.data
-    ?.map(
-      (product) =>
-        (product.product_detail.product_price -
-          (product.product_detail.product_price *
-            product.product_detail.product_sale) /
-            100) *
-        product.product_quantity
-    )
-    .reduce((acc, currentValue) => acc + currentValue, 0);
+  function calculateTotalPrice(order) {
+    let totalPrice = 0;
+    const discount = parseFloat(order.product_detail.product_sale) / 100;
+
+    order.product_colors.forEach((color) => {
+      if (color.color_id === order.color_id) {
+        totalPrice +=
+          (color.product_price - color.product_price * discount) *
+          order.product_quantity;
+      }
+    });
+
+    return totalPrice;
+  }
+
+  const totalCostAllOrders = (isListProduct?.data || [])
+    .map((order) => calculateTotalPrice(order))
+    .reduce((acc, curr) => acc + curr, 0);
+
   //change quantity
   const handleQuantityChange = (index, newQuantity) => {
     setQuantity({
@@ -119,11 +131,10 @@ export const Cart = () => {
     Notification.success("Updated quantity successfully!");
   };
 
-  //set data để giử api
   const [dataSend, setDataSend] = useState();
   const data = {
     customer_id: IdCustomer,
-    order_total: total,
+    order_total: totalCostAllOrders - dataCoupon,
     order_status: 1,
     order_detail: isListProduct?.data?.map((item) => ({
       product_id: item.product_detail.product_id,
@@ -144,6 +155,17 @@ export const Cart = () => {
   const currentYear = currentDate.getFullYear();
 
   const CompleteOrder = async () => {
+    const dataSend = {
+      customer_id: IdCustomer,
+      order_total: totalCostAllOrders - dataCoupon,
+      order_status: 1,
+      order_detail: isListProduct?.data?.map((item) => ({
+        product_id: item.product_detail.product_id,
+        product_name: item.product_detail.product_name,
+        product_price: item.product_detail.product_price,
+        product_sales_quantity: item.product_quantity,
+      })),
+    };
     await OrderProduct(dataSend);
     const payload = {
       customer_id: dataSend.customer_id,
@@ -161,6 +183,19 @@ export const Cart = () => {
     return color ? color.color_name : "";
   };
 
+  const handleGetCoupon = async () => {
+    const payload = {
+      coupon_code: dataInputCoupon,
+    };
+    const result = await GetCouponBycode(payload);
+    if (typeof result === "object") {
+      Notification.error("Invalid discount code!");
+    } else {
+      setDataCoupon(result);
+      Notification.success("Apply discount code successfully!");
+    }
+  };
+
   return (
     <>
       {!isBill && !isCheckout && isListProduct?.data?.length > 0 && (
@@ -172,13 +207,13 @@ export const Cart = () => {
             >
               <div className="flex items-center justify-between pb-10 mb-3 border-b-2">
                 <p className="font-bold text-3xl">Shopping Cart</p>
-                <p>{arraySum} sản phẩm</p>
+                <p>{Math.abs(arraySum)} sản phẩm</p>
               </div>
               {isListProduct?.data?.map((item, index) => {
                 // lấy ra quantity với màu đã chọn
-                const quantityColor = item?.product_colors?.find(
+                const mapProductColor = item?.product_colors?.find(
                   (item) => item.color_id === item.color_id
-                )?.quantity;
+                );
 
                 return (
                   <div
@@ -202,13 +237,13 @@ export const Cart = () => {
                       setQuantity={(newQuantity) =>
                         handleQuantityChange(index, newQuantity)
                       }
-                      maxQuantity={quantityColor}
+                      maxQuantity={mapProductColor?.quantity}
                     />
 
                     <p>
                       {FormatPrice(
-                        item.product_detail.product_price -
-                          (item.product_detail.product_price *
+                        mapProductColor.product_price -
+                          (mapProductColor.product_price *
                             item.product_detail.product_sale) /
                             100
                       )}
@@ -239,11 +274,41 @@ export const Cart = () => {
               </div>
               <div className="border-b-2 pb-5 border-[#bdbdbd]">
                 <p className="text-sm font-semibold my-3">GIVE CODE</p>
-                <input type="text" className="w-full p-2" />
+                <div className="flex justify-between items-center gap-5">
+                  <input
+                    type="text"
+                    className="w-3/4 p-2"
+                    onChange={(e) => {
+                      setDataInputCoupon(e.target.value);
+                    }}
+                  />
+                  <ButtonModal
+                    title={"Check"}
+                    type={"button"}
+                    sizeSm={true}
+                    textBlack
+                    className={
+                      "bg-blue-400 text-[white] hover:bg-[#1B84FF] hover:text-white w-1/4"
+                    }
+                    onClick={handleGetCoupon}
+                  />
+                </div>
               </div>
+              {dataCoupon !== 0 ? (
+                <div className="flex justify-between my-3 items-center text-sm font-semibold">
+                  <p className="">COUPON: {dataInputCoupon}</p>
+                  <p>{FormatPrice(dataCoupon)}</p>
+                </div>
+              ) : null}
               <div className="flex justify-between my-3 items-center text-sm font-semibold">
                 <p className="">TOTAL PRICE</p>
-                <p>{FormatPrice(total)}</p>
+                <p>
+                  {FormatPrice(
+                    dataCoupon !== 0
+                      ? totalCostAllOrders - dataCoupon
+                      : totalCostAllOrders
+                  )}
+                </p>
               </div>
               <div className="flex justify-center pt-5">
                 <Button title={"CHECKOUT"} type={"submit"} />
@@ -306,6 +371,7 @@ export const Cart = () => {
               <thead className="bg-gray-200">
                 <tr className="border-b border-gray-300 ">
                   <th className="px-4 py-2 text-center">NAME</th>
+                  <th className="px-4 py-2 text-center">COLOR</th>
                   <th className="px-4 py-2 text-center">QUANTITY</th>
                   <th className="px-4 py-2 text-center">UNIT PRICE</th>
                   <th className="px-4 py-2 text-center">DISCOUNT</th>
@@ -313,35 +379,54 @@ export const Cart = () => {
                 </tr>
               </thead>
               <tbody>
-                {isListProduct?.data?.map((item, index) => (
-                  <tr className="border-b border-gray-300" key={index}>
-                    <td className="px-4 py-2">
-                      {item.product_detail.product_name}
-                    </td>
-                    <td className="px-4 py-2">1</td>
-                    <td className="px-4 py-2">
-                      {FormatPrice(item.product_detail.product_price)}
-                    </td>
-                    <td className="px-4 py-2">
-                      {item.product_detail.product_sale}%
-                    </td>
-                    <td className="px-4 py-2">
-                      {FormatPrice(
-                        item.product_detail.product_price -
-                          (item.product_detail.product_price *
-                            item.product_detail.product_sale) /
-                            100
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                {isListProduct?.data?.map((item, index) => {
+                  const filteredProductColors = item.product_colors.filter(
+                    (color) => color.color_id === item.color_id
+                  );
+
+                  console.log(filteredProductColors);
+                  return (
+                    <tr className="border-b border-gray-300" key={index}>
+                      <td className="px-4 py-2">
+                        {item.product_detail.product_name}
+                      </td>
+                      <td className="px-4 py-2">
+                        {getColorName(item.color_id)}
+                      </td>
+                      <td className="px-4 py-2">{item.product_quantity}</td>
+                      <td className="px-4 py-2">
+                        {FormatPrice(filteredProductColors[0].product_price)}
+                      </td>
+                      <td className="px-4 py-2">
+                        {item.product_detail.product_sale}%
+                      </td>
+                      <td className="px-4 py-2">
+                        {FormatPrice(
+                          filteredProductColors[0].product_price -
+                            (filteredProductColors[0].product_price *
+                              item.product_detail.product_sale) /
+                              100
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
 
                 <tr>
                   <td className="px-4 py-2"></td>
                   <td className="px-4 py-2"></td>
                   <td className="px-4 py-2"></td>
-                  <td className="px-4 py-2">Tổng cộng</td>
-                  <td className="px-4 py-2">{FormatPrice(total)}</td>
+                  <td className="px-4 py-2">TOTAL</td>
+                  <td className="px-4 py-2">
+                    {FormatPrice(totalCostAllOrders)}
+                  </td>
+                </tr>
+                <tr>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2"></td>
+                  <td className="px-4 py-2">COUPON</td>
+                  <td className="px-4 py-2">{FormatPrice(dataCoupon)}</td>
                 </tr>
                 <tr>
                   <td className="px-4 py-2"></td>
@@ -355,7 +440,9 @@ export const Cart = () => {
                   <td className="px-4 py-2"></td>
                   <td className="px-4 py-2"></td>
                   <td className="px-4 py-2">TOTAL PAYMENT</td>
-                  <td className="px-4 py-2">{FormatPrice(total)}</td>
+                  <td className="px-4 py-2">
+                    {FormatPrice(totalCostAllOrders - dataCoupon)}
+                  </td>
                 </tr>
               </tbody>
             </table>
