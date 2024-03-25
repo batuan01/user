@@ -219,7 +219,7 @@ export const Header = () => {
           <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
             <li className="inline-flex items-center">
               <Link href="/">
-                <div className="flex gap-1 items-center text-sm font-medium text-gray-700 hover:text-blue-600 dark:text-gray-400 dark:hover:text-white">
+                <div className="flex gap-1 items-center text-sm font-medium hover:text-blue-600 dark:hover:text-white cursor-pointer">
                   <ImHome />
                   Home
                 </div>
@@ -228,7 +228,7 @@ export const Header = () => {
             <li>
               <div className="flex items-center">
                 <FaAngleRight />
-                <span className="cursor-pointer ms-1 text-sm font-medium text-gray-700 hover:text-blue-600 md:ms-2 dark:text-gray-400 dark:hover:text-white">
+                <span className="cursor-pointer ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:hover:text-white">
                   {breadcrumb}
                 </span>
               </div>

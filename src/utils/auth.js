@@ -24,6 +24,9 @@ export const SignupCustomer = async (payload) => {
   try {
     const { data, status } = await SERVICES.signupCustomer(payload);
     if (status === 201) {
+      Cookies.set("token", data.data.access_token);
+      const id_customer = btoa(data.data.customer.customer_id); // Sử dụng hàm btoa() để mã hóa Base64
+      Cookies.set("id_customer", id_customer);
       Notification.success("Success !");
     } else {
       logError(data);

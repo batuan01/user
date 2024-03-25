@@ -86,7 +86,7 @@ export const HaderSection = () => {
               style={{ backgroundImage: `url(${item.backgroundImage})` }}
             >
               <div className="content">
-                <h2 className="title">{item.title}</h2>
+                <h2 className="title-header">{item.title}</h2>
                 <p className="description">{item.description}</p>
                 <button id="A">Read More</button>
               </div>

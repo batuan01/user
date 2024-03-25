@@ -47,6 +47,13 @@
   }
 }
 
+.title-header {
+  text-align: left;
+  text-transform: uppercase;
+  font-size: 20px;
+  font-weight: bold;
+}
+
 .content {
   width: min(30vw, 400px);
   position: absolute;
@@ -59,7 +66,7 @@
   opacity: 0;
   display: none;
 
-  & .title {
+  & .title-header {
     font-family: "arial-black";
     text-transform: uppercase;
   }
@@ -123,7 +130,7 @@
 
 @media (width > 650px) and (width < 900px) {
   .content {
-    & .title {
+    & .title-header {
       font-size: 1rem;
     }
     & .description {
@@ -155,7 +162,7 @@
 
 @media (width < 650px) {
   .content {
-    & .title {
+    & .title-header {
       font-size: 0.9rem;
     }
     & .description {
@@ -185,7 +192,6 @@
   }
 }
 
-
 .shop:before {
   content: "";
   position: absolute;
@@ -193,7 +199,7 @@
   bottom: 0;
   left: 0px;
   width: 60%;
-  background: #F05D23;
+  background: #f05d23;
   opacity: 0.8;
   -webkit-transform: skewX(-45deg);
   -ms-transform: skewX(-45deg);
@@ -207,7 +213,7 @@
   bottom: 0;
   left: 1px;
   width: 100%;
-  background: #F05D23;
+  background: #f05d23;
   opacity: 0.9;
   -webkit-transform: skewX(-45deg) translateX(-100%);
   -ms-transform: skewX(-45deg) translateX(-100%);
@@ -215,17 +221,17 @@
 }
 .shop .shop-img {
   position: relative;
-  background-color: #E4E7ED;
+  background-color: #e4e7ed;
   z-index: -1;
 }
 
-.shop .shop-img>img {
+.shop .shop-img > img {
   width: 100%;
   -webkit-transition: 0.2s all;
   transition: 0.2s all;
 }
 
-.shop:hover .shop-img>img {
+.shop:hover .shop-img > img {
   -webkit-transform: scale(1.1);
   -ms-transform: scale(1.1);
   transform: scale(1.1);
@@ -241,12 +247,12 @@
 }
 
 .shop .shop-body h3 {
-  color: #FFF;
+  color: #fff;
   margin-bottom: 10px;
 }
 
 .shop .shop-body .cta-btn {
-  color: #FFF;
+  color: #fff;
   text-transform: uppercase;
   display: flex;
   align-items: center;

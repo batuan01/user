@@ -2,7 +2,11 @@ import { useRouter } from "next/router";
 import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../contexts/AuthContext";
 import Cookies from "js-cookie";
-import { GetCustomerDetail, GetOrderProduct } from "../../utils/auth";
+import {
+  GetCustomerDetail,
+  GetOrderProduct,
+  UpdateCustomer,
+} from "../../utils/auth";
 import { Tab } from "@headlessui/react";
 import { FcBusinessman, FcSurvey } from "react-icons/fc";
 import { useForm } from "react-hook-form";
@@ -10,6 +14,8 @@ import { InputFormUser } from "../atoms/Input";
 import { UploadInfoImage } from "../molecules/UploadInfoImage";
 import { ButtonModal } from "../atoms/Button";
 import { FormatPrice } from "../atoms/FormatPrice";
+import { ConvertFirebase } from "../../utils/firebase";
+import Notification from "../atoms/Notification";
 
 export const Account = () => {
   const { setLoad } = useContext(AuthContext);
@@ -17,6 +23,7 @@ export const Account = () => {
   const [selectedFilesInfo, setSelectedFilesInfo] = useState([]);
   const [dataInfo, setDataInfo] = useState();
   const [dataOrder, setDataOrder] = useState();
+  const [isReload, setIsReload] = useState(false);
 
   const router = useRouter();
   const params = router.query;
@@ -45,7 +52,7 @@ export const Account = () => {
     if (IdCustomer) {
       fetchAccount();
     }
-  }, [IdCustomer]);
+  }, [IdCustomer, isReload]);
 
   useEffect(() => {
     reset({
@@ -92,8 +99,8 @@ export const Account = () => {
 
   const listProduct = ({ data }) => {
     return (
-      <>
-        <div className="flex items-center justify-between  p-5 bg-[#f2e8e8] hover:shadow-lg hover:scale-[10]">
+      <div className="transform transition duration-300 hover:scale-105 hover:shadow-lg">
+        <div className="flex items-center justify-between  p-5 bg-[#f2e8e8]">
           <div className="flex gap-4">
             <img
               src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTFz6ITuCujVMoiuvRoLEQyHVwXFHkfqtWSMe5wU9783RN_v7DS7T-Pk_VDpVSK3qlwTBGJQrbdHpQ8L2EWFkXJSJdAevX2AmcATX41O-wGG94SCZ0gz1O6XHv1vmCikozSnb9BJ2bhiw&usqp=CAc"
@@ -109,12 +116,29 @@ export const Account = () => {
             {FormatPrice(20000)}
           </p>
         </div>
-      </>
+      </div>
     );
   };
 
-  const handleUpdateAccount = (d) => {
-    console.log(d);
+  const handleUpdateAccount = async (data) => {
+    setLoad(true);
+    let urlInfo;
+    if (typeof selectedFilesInfo[0] === "object") {
+      urlInfo = await ConvertFirebase({ images: selectedFilesInfo });
+    } else {
+      urlInfo = selectedFilesInfo;
+    }
+
+    const dataSend = {
+      customer_id: IdCustomer,
+      customer_phone: data.customer_phone || "",
+      customer_fullname: data.customer_fullname || "",
+      customer_image: urlInfo[0] || "",
+    };
+    await UpdateCustomer(dataSend);
+    setLoad(false);
+    Notification.success("Create slider successfully!");
+    setIsReload(!isReload);
   };
 
   return (
@@ -123,11 +147,14 @@ export const Account = () => {
         <div className="w-1/6">
           <div className=" flex gap-2 items-center">
             <img
-              src="https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg"
+              src={
+                dataInfo?.customer_image ??
+                "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg"
+              }
               alt="avt"
               className="rounded-full w-10 h-10"
             />
-            <p>Tuan Nguyen</p>
+            <p>{dataInfo?.customer_fullname || ""}</p>
           </div>
           <div className="mt-5">
             <ul>

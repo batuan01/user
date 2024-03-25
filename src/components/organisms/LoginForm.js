@@ -35,6 +35,7 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
     const signupData = {
       customer_name: d.username,
       customer_password: d.password,
+      customer_fullname: d.fullname,
     };
     try {
       await SignupCustomer(signupData);
@@ -61,6 +62,26 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
           <h2 className="login__title">{create ? "Signup" : "Signin"}</h2>
 
           <div className="login__group">
+            {create ? (
+              <div>
+                <label htmlFor="fullname" className="login__label">
+                  Full Name
+                </label>
+                <InputForm
+                  register={register("fullname", {
+                    required: "full name cannot be left blank",
+                  })}
+                  type="text"
+                  placeholder={"fullname"}
+                />
+                {errors.fullname && errors.fullname.type === "required" && (
+                  <span className="text-red text-xs italic">
+                    {errors.fullname.message}
+                  </span>
+                )}
+              </div>
+            ) : null}
+
             <div>
               <label htmlFor="email" className="login__label">
                 Email
