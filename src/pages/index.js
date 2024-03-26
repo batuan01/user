@@ -5,6 +5,8 @@ import { ListCategoryBottom } from "../components/molecules/ListCategoryBottom";
 import { LoadingAllPage } from "../components/atoms/Loading";
 import { useContext } from "react";
 import { AuthContext } from "../components/contexts/AuthContext";
+import { PostVNPay } from "../utils/auth";
+import { useRouter } from "next/router";
 
 export const metadata = {
   title: "Technology",
@@ -12,8 +14,25 @@ export const metadata = {
 };
 const Home = () => {
   const { load, setLoad } = useContext(AuthContext);
+  const router = useRouter();
+  const handleVnpayPayment = async () => {
+    try {
+      const payload = {
+        total: 100000, // Thay bằng giá trị thực của tổng đơn hàng
+        fee: 10, // Thay bằng giá trị thực của phí (nếu có)
+      };
+      const response = await PostVNPay(payload);
+      console.log("VNPAY payment response:", response);
+      // Xử lý URL thanh toán nhận được (chuyển hướng người dùng đến trang thanh toán)
+      router.push(response.data); // Chuyển hướng đến URL thanh toán
+    } catch (error) {
+      console.error("Error:", error.message);
+      // Xử lý lỗi (nếu cần)
+    }
+  };
   return (
     <>
+      <button onClick={handleVnpayPayment}>1234</button>
       <LoadingAllPage isOpen={load} setIsOpen={setLoad} />
       <HaderSection />
       <div className="container mx-auto">

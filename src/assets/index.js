@@ -103,6 +103,8 @@ const SERVICES = {
 
   /* <COUPON> */
   getAllCoupon: (payload) => mainRequest(`/allCoupon/`, payload, "get"),
+
+  postVNPay: (payload) => mainRequest(`/vnpay-payment/`, payload, "post"),
 };
 
 export default SERVICES;
