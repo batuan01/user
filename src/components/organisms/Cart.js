@@ -200,9 +200,9 @@ export const Cart = () => {
     <>
       {!isBill && !isCheckout && isListProduct?.data?.length > 0 && (
         <form onSubmit={handleSubmit(onSubmit)} className="block">
-          <div className="px-[5rem] py-10 grid lg:grid-cols-10">
+          <div className="px-[5rem] py-10">
             <div
-              className=" bg-white p-10 lg:col-span-7 shadow-2xl"
+              className=" bg-white p-10 shadow-2xl"
               style={{ borderRadius: "20px 0 0 20px" }}
             >
               <div className="flex items-center justify-between pb-10 mb-3 border-b-2">
@@ -257,15 +257,33 @@ export const Cart = () => {
                   </div>
                 );
               })}
-              <div className="flex justify-end items-end pt-5">
+
+              <div className="flex justify-end gap-5 py-5 items-center text-xl font-semibold border-t-2">
+                <p className="">TOTAL PRICE:</p>
+                <p>
+                  {FormatPrice(
+                    dataCoupon !== 0
+                      ? totalCostAllOrders - dataCoupon
+                      : totalCostAllOrders
+                  )}
+                </p>
+              </div>
+
+              <div className="flex justify-end items-end pt-5 gap-10">
                 <Button
                   title={"UPDATE QUANTITY"}
                   type={"button"}
                   onClick={handleQuantity}
                 />
+                <Button
+                  title={"CHECKOUT"}
+                  type={"button"}
+                  onClick={() => router.push("/checkout")}
+                />
               </div>
             </div>
-            <div
+
+            {/* <div
               className=" bg-[#ddd] p-10 lg:col-span-3 shadow-2xl"
               style={{ borderRadius: "0 20px 20px 0" }}
             >
@@ -313,7 +331,7 @@ export const Cart = () => {
               <div className="flex justify-center pt-5">
                 <Button title={"CHECKOUT"} type={"submit"} />
               </div>
-            </div>
+            </div> */}
           </div>
         </form>
       )}
@@ -384,11 +402,10 @@ export const Cart = () => {
                     (color) => color.color_id === item.color_id
                   );
 
-                  console.log(filteredProductColors);
                   return (
                     <tr className="border-b border-gray-300" key={index}>
                       <td className="px-4 py-2">
-                        {item.product_detail.product_name}
+                        {TruncateText(item.product_detail.product_name, 50)}
                       </td>
                       <td className="px-4 py-2">
                         {getColorName(item.color_id)}

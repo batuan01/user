@@ -9,8 +9,8 @@ export function Select({ selected, onChange, content }) {
     <Listbox value={selected} onChange={onChange}>
       {({ open }) => (
         <>
-          <div className="relative mt-2 w-full h-full">
-            <Listbox.Button className="relative h-full cursor-default bg-inherit py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm border-t-0 border-x-0 border-b-[1px] border-solid border-black focus:outline-none sm:text-sm sm:leading-6 min-w-[150px] min-h-[40px] w-full hover:cursor-pointer">
+          <div className="relative mt-2 w-full h-12">
+            <Listbox.Button className="relative h-full cursor-default bg-inherit py-1.5 pl-3 pr-10 text-left text-gray-900 shadow-sm border border-solid border-stone-400 focus:outline-none sm:text-sm sm:leading-6 min-w-[150px] min-h-[40px] w-full hover:cursor-pointer">
               <span className="flex items-center">
                 <span className="block truncate">{selected?.name}</span>
               </span>
@@ -36,7 +36,7 @@ export function Select({ selected, onChange, content }) {
               leaveFrom="opacity-100"
               leaveTo="opacity-0"
             >
-              <Listbox.Options className="absolute z-10 mt-1 max-h-56 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm w-full">
+              <Listbox.Options className="absolute z-10 mt-1 max-h-52 overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm w-full">
                 {content}
               </Listbox.Options>
             </Transition>

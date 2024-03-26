@@ -45,6 +45,7 @@ export const InputForm = ({
   className,
   autoComplete,
   disabled,
+  onChange,
 }) => {
   return (
     <input
@@ -57,6 +58,7 @@ export const InputForm = ({
       style={{ "--tw-ring-color": "rgba(0,0,0,0.6)" }}
       autoComplete={autoComplete}
       disabled={disabled}
+      onChange={onChange}
     />
   );
 };
@@ -82,7 +84,7 @@ export const InputFormUser = ({
         type={type}
         {...register}
         placeholder={placeholder}
-        className={`w-full h-12 border border-stone-400 border-solid rounded-sm p-1 pl-[20px] text-base shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-2 focus-visible:ring-offset-teal-300  ${
+        className={`w-full h-12 border border-stone-400 border-solid rounded-sm p-1 pl-[20px] text-base shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-white/75 focus-visible:ring-offset-1 focus-visible:ring-offset-blue-400  ${
           disabled ? "text-opacity-80" : "text-opacity-100"
         } + ${className} `}
         style={{ "--tw-ring-color": "rgba(0,0,0,0.2)" }}

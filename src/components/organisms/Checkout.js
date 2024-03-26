@@ -30,19 +30,6 @@ const shipping = [
   },
 ];
 
-const imgBank = [
-  "https://cdn.tuoitre.vn/thumb_w/1200/471584752817336320/2023/2/23/62ce8018d5cacb6b28727421mb-bank-logo-1677142193380605336933.jpg",
-  "https://danhbaict.vn/uploads/business/logo/business1619171978-logo%20170x125-01.jpg",
-  "https://cafefcdn.com/203337114487263232/2023/12/1/screen-shot-2023-12-01-at-08-40-46-1701394890371130086612.png",
-  "https://upload.wikimedia.org/wikipedia/vi/e/e5/Logo-Ngan_hang_Phuong_Dong.png",
-  "https://zinpro.vn/public/images/images/tin-tuc/agribank.jpg",
-  "https://apithanhtoan.com/wp-content/uploads/2020/08/Logo-ngan-hang-vietinbank.png",
-  "https://image.tienphong.vn/w890/Uploaded/2024/Osgmky/5/ae7/5ae7fb4cb2e8118b45fe10e8778a2757.jpg",
-  "https://419.vn/wp-content/uploads/2020/10/logo-Techcombank.jpg",
-  "https://thebank.vn/uploads/2020/05/02/thebank_logotpbank_1588408748.jpg",
-  "https://cdn.haitrieu.com/wp-content/uploads/2023/11/Logo-PVcombank.png",
-];
-
 export const CheckoutForm = ({
   setIsCheckout,
   dataSend,
@@ -50,7 +37,6 @@ export const CheckoutForm = ({
   setIsBill,
 }) => {
   const [currentStep, setCurrentStep] = useState(1);
-  const [isOpen, setIsOpen] = useState(false);
   const [selectedShipping, setSelectedShipping] = useState(shipping[0]);
 
   const [selectedProvince, setSelectedProvince] = useState(null);
@@ -137,65 +123,6 @@ export const CheckoutForm = ({
     }
   }, [selectedProvince, selectedDistrict]);
 
-  const ContentModal = [];
-
-  ContentModal.push(
-    <div className="flex justify-center items-center flex-col gap-5">
-      <img
-        src="https://scontent.fhan14-5.fna.fbcdn.net/v/t1.15752-9/430624647_3817558161796879_5055141579412754074_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=5f2048&_nc_ohc=wjukGNWcFhIAX94WjY7&_nc_ht=scontent.fhan14-5.fna&oh=03_AdQnPdWDY8-qAs3AGmuHzJrWmqKNBirOesaWKQNQ4JJe6A&oe=66155E56"
-        className="max-w-[200px]"
-      />
-      <p>Thông tin chuyển khoản ngân hàng</p>
-      <p className="p-3 bg-slate-100">
-        Vui lòng chuyển khoản với nội dung MUAHANG để chúng tôi xác nhận
-      </p>
-      <table className="border-collapse">
-        <thead>
-          <tr>
-            <th className="p-3 border border-gray-300 border-solid">
-              Tên tài khoản
-            </th>
-            <th className="p-3 border border-gray-300 border-solid">
-              Số tài khoản
-            </th>
-            <th className="p-3 border border-gray-300 border-solid">
-              Ngân hàng
-            </th>
-            <th className="p-3 border border-gray-300 border-solid">Số tiền</th>
-            <th className="p-3 border border-gray-300 border-solid">
-              Nội dung
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr>
-            <td className="p-3 border border-gray-300 border-solid">
-              NGUYEN THI PHUONG
-            </td>
-            <td className="p-3 border border-gray-300 border-solid">
-              12341234
-            </td>
-            <td className="p-3 border border-gray-300 border-solid">MB</td>
-            <td className="p-3 border border-gray-300 border-solid">
-              {FormatPrice(dataSend.order_total)}
-            </td>
-            <td className="p-3 border border-gray-300 border-solid">MUAHANG</td>
-          </tr>
-        </tbody>
-      </table>
-
-      <button
-        className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
-        onClick={() => {
-          setIsBill(true);
-          setDataSend({ ...dataSend, payment_id: 2 });
-        }}
-      >
-        Payment completed
-      </button>
-    </div>
-  );
-
   let ContentProvinces = [];
   pushData({
     arrayForm: ContentProvinces,
@@ -224,6 +151,13 @@ export const CheckoutForm = ({
     setDataSend({ ...dataSend, shipping_info });
     handleNextClick();
   };
+
+    // lấy ra ngày tháng năm hiện tại
+    const currentDate = new Date();
+
+    const currentDay = currentDate.getDate();
+    const currentMonth = currentDate.getMonth() + 1; // Tháng bắt đầu từ 0, cần cộng thêm 1
+    const currentYear = currentDate.getFullYear();
 
   return (
     <>
@@ -263,7 +197,9 @@ export const CheckoutForm = ({
                     placeholder={"Name"}
                   />
                   {errors.name && (
-                    <p className="text-[#FF6868] italic">{errors.name.message}</p>
+                    <p className="text-[#FF6868] italic">
+                      {errors.name.message}
+                    </p>
                   )}
                 </div>
                 <div className="w-full">
@@ -442,66 +378,145 @@ export const CheckoutForm = ({
         <div className="m-14">
           {currentStep === 3 ? (
             <>
-              <div className="w-full px-2 pt-16 sm:px-0">
-                <Tab.Group>
-                  <Tab.List className="flex space-x-1 rounded-xl bg-blue-900/20 p-1">
-                    {["Cash On Delivery", "Payment Via Card"].map(
-                      (category, index) => (
-                        <Tab
-                          key={index}
-                          className={({ selected }) =>
-                            classNames(
-                              "w-full rounded-lg py-2.5 text-sm font-medium leading-5",
-                              "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2",
-                              selected
-                                ? "bg-white text-blue-700 shadow"
-                                : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                            )
-                          }
-                        >
-                          {category}
-                        </Tab>
-                      )
-                    )}
-                  </Tab.List>
-                  <Tab.Panels className="mt-2">
-                    <Tab.Panel>
-                      <p className="mt-5">
-                        Thanh toán khi nhận hàng: Phí thu hộ:
-                        {FormatPrice(dataSend.order_total)}.
-                      </p>
-                      <p>
-                        (Ưu đãi về phí vận chuyển (nếu có) áp dụng cả với phí
-                        thu hộ.)
-                      </p>
-                    </Tab.Panel>
-                    <Tab.Panel>
-                      <div className="w-full px-4 py-16 grid grid-cols-5 grid-rows-2 gap-4">
-                        {imgBank.map((item, index) => (
-                          <div
-                            key={index}
-                            className="aspect-w-1 aspect-h-1 overflow-hidden cursor-pointer"
-                          >
-                            <img
-                              src={item}
-                              className="w-full h-full"
-                              alt={`Image ${index}`}
-                              onClick={() => setIsOpen(true)}
-                            />
-                          </div>
-                        ))}
+              <div className="flex justify-center w-full">
+                <div className="min-w-[500px] border-t-8 border-solid border-blue-400 p-5 rounded-lg bg-slate-200 my-10">
+                  <div className="flex justify-between">
+                    <div className="flex gap-4 items-center">
+                      <img
+                        src="https://d1hjkbq40fs2x4.cloudfront.net/2016-01-31/files/1045-2.jpg"
+                        className="w-16"
+                      />
+                      <div>
+                        <p>TGDD</p>
+                        <p>thegioididong.com</p>
                       </div>
-                    </Tab.Panel>
-                  </Tab.Panels>
-                </Tab.Group>
+                    </div>
+                    <div className="flex flex-col">
+                      <p className="font-bold text-xl text-center">BILL</p>
+                      <p>{`Ngày ${currentDay} tháng ${currentMonth} năm ${currentYear}`}</p>
+                    </div>
+                  </div>
+
+                  <p className="font-bold text-2xl my-3 pt-3">
+                    {dataSend?.shipping_info?.shipping_name}
+                  </p>
+                  <p>
+                    Điện thoại khách hàng:{" "}
+                    {dataSend?.shipping_info?.shipping_phone}
+                  </p>
+                  <p>
+                    Địa chỉ khách hàng:{" "}
+                    {dataSend?.shipping_info?.shipping_address}
+                  </p>
+
+                  <table className="table-auto w-full border-collapse mt-5 text-center">
+                    <thead className="bg-gray-200">
+                      <tr className="border-b border-gray-300 ">
+                        <th className="px-4 py-2 text-center">NAME</th>
+                        <th className="px-4 py-2 text-center">COLOR</th>
+                        <th className="px-4 py-2 text-center">QUANTITY</th>
+                        <th className="px-4 py-2 text-center">UNIT PRICE</th>
+                        <th className="px-4 py-2 text-center">DISCOUNT</th>
+                        <th className="px-4 py-2 text-center">AMOUNT</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {isListProduct?.data?.map((item, index) => {
+                        const filteredProductColors =
+                          item.product_colors.filter(
+                            (color) => color.color_id === item.color_id
+                          );
+
+                        return (
+                          <tr className="border-b border-gray-300" key={index}>
+                            <td className="px-4 py-2">
+                              {TruncateText(
+                                item.product_detail.product_name,
+                                50
+                              )}
+                            </td>
+                            <td className="px-4 py-2">
+                              {getColorName(item.color_id)}
+                            </td>
+                            <td className="px-4 py-2">
+                              {item.product_quantity}
+                            </td>
+                            <td className="px-4 py-2">
+                              {FormatPrice(
+                                filteredProductColors[0].product_price
+                              )}
+                            </td>
+                            <td className="px-4 py-2">
+                              {item.product_detail.product_sale}%
+                            </td>
+                            <td className="px-4 py-2">
+                              {FormatPrice(
+                                filteredProductColors[0].product_price -
+                                  (filteredProductColors[0].product_price *
+                                    item.product_detail.product_sale) /
+                                    100
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+
+                      <tr>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2">TOTAL</td>
+                        <td className="px-4 py-2">
+                          {FormatPrice(totalCostAllOrders)}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2">COUPON</td>
+                        <td className="px-4 py-2">{FormatPrice(dataCoupon)}</td>
+                      </tr>
+                      <tr>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2">TAX(0%)</td>
+                        <td className="px-4 py-2">0₫</td>
+                      </tr>
+                      <tr className="text-blue-400">
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2"></td>
+                        <td className="px-4 py-2">TOTAL PAYMENT</td>
+                        <td className="px-4 py-2">
+                          {FormatPrice(totalCostAllOrders - dataCoupon)}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                  <div className="flex justify-center mt-10 gap-10">
+                    <button
+                      className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
+                      onClick={() => {
+                        setIsBill(false);
+                        setIsCheckout(false);
+                      }}
+                    >
+                      Back to Cart
+                    </button>
+                    <button
+                      className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
+                      onClick={CompleteOrder}
+                    >
+                      Complete Order
+                    </button>
+                  </div>
+                </div>
               </div>
             </>
           ) : null}
         </div>
-
-        {isOpen && (
-          <Modal isOpen={isOpen} setIsOpen={setIsOpen} content={ContentModal} />
-        )}
 
         <div className="button-container">
           <div
@@ -547,5 +562,5 @@ function CheckIcon(props) {
 }
 
 function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
+  return classes.filter(Boolean).join(" ");
 }
