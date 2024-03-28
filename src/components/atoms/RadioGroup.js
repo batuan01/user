@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-export const RadioGroup = ({ options, selectedOption, setSelectedOption }) => {
+export const RadioGroupForm = ({ options, selectedOption, setSelectedOption }) => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };

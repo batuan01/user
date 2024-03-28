@@ -10,7 +10,7 @@ import {
   ListProvinces,
   ListWards,
 } from "../../utils/auth";
-import { CouponIcon, MarkerIcon, PaymentIcon } from "../atoms/Icon";
+import { CheckIcon, CouponIcon, MarkerIcon, PaymentIcon } from "../atoms/Icon";
 import { ButtonModal } from "../atoms/Button";
 import { FaPlusCircle } from "react-icons/fa";
 import { FcSmartphoneTablet, FcShipped } from "react-icons/fc";
@@ -18,11 +18,32 @@ import { TruncateText } from "../atoms/TruncateText";
 import { FormatPrice } from "../atoms/FormatPrice";
 import Notification from "../atoms/Notification";
 import { InputForm, InputFormUser } from "../atoms/Input";
-import { RadioGroup } from "../atoms/RadioGroup";
+import { RadioGroupForm } from "../atoms/RadioGroup";
 import { Modal } from "../molecules/Modal";
 import { TextRequired } from "../atoms/Text";
 import { Select, pushData } from "../atoms/Select";
+import { RadioGroup } from "@headlessui/react";
 
+const shipping = [
+  {
+    name: "Giao Hàng Nhanh",
+    img: "https://cdn.ntlogistics.vn/images/NTX/new_images/don-vi-giao-hang-nhanh-uy-tin-ghn-giao-hang-nhanh.jpg",
+    time: "2-3 ngày",
+    price: "25.000đ",
+  },
+  {
+    name: "Giao Hàng Tiết Kiệm",
+    img: "https://pos.nvncdn.com/4e732c-26/art/artCT/20181228_SbXO18pl4kMio4juj73bLjYK.png",
+    time: "3-4 ngày",
+    price: "20.000đ",
+  },
+  {
+    name: "J&T Express",
+    img: "https://pos.nvncdn.com/4e732c-26/art/artCT/20230227_wgp7wUbuOUJ7bTUG.png",
+    time: "5-6 ngày",
+    price: "15.000đ",
+  },
+];
 export const CheckoutForm = () => {
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
   const [isListProduct, setIsListProduct] = useState([]);
@@ -30,6 +51,7 @@ export const CheckoutForm = () => {
   const [dataInputCoupon, setDataInputCoupon] = useState();
   const [selectedOption, setSelectedOption] = useState("1");
   const [isOpenAddress, setIsOpenAddress] = useState(false);
+  const [isOpenTransport, setIsOpenTransport] = useState(false);
 
   const [selectedProvince, setSelectedProvince] = useState(null);
   const [allProvince, setAllProvince] = useState();
@@ -39,6 +61,8 @@ export const CheckoutForm = () => {
 
   const [selectedWards, setSelectedWards] = useState(null);
   const [allWards, setAllWards] = useState();
+
+  const [selectedShipping, setSelectedShipping] = useState(shipping[0]);
 
   const router = useRouter();
   const storedIdCustomer = Cookies.get("id_customer");
@@ -71,7 +95,6 @@ export const CheckoutForm = () => {
       fetchCart();
     }
   }, [IdCustomer]);
-  console.log(isListProduct);
 
   //lấy ra color mà sản phẩm có
   const getColorName = (colorId) => {
@@ -324,6 +347,86 @@ export const CheckoutForm = () => {
     </form>
   );
 
+  const handleCloseModalTransport = () => {
+    setIsOpenTransport(false);
+    reset();
+  };
+
+  const handleCreateTransport = () => {};
+
+  const ContentModalTransport = (
+    <form onSubmit={handleSubmit(handleCreateTransport)}>
+      <p className="text-lg font-medium">Shipping Unit</p>
+
+      <div className="mx-auto w-full px-4 py-10 min-w-[500px]">
+        <RadioGroup value={selectedShipping} onChange={setSelectedShipping}>
+          <div className="space-y-2">
+            {shipping.map((plan, index) => (
+              <RadioGroup.Option
+                key={index}
+                value={plan}
+                className={({ active, checked }) =>
+                  `${
+                    active
+                      ? "ring-2 ring-white/60 ring-offset-2 ring-offset-sky-300"
+                      : ""
+                  }
+                  ${checked ? "bg-sky-900/75 text-white" : "bg-white"}
+                    relative flex cursor-pointer rounded-lg px-5 py-4 shadow-md focus:outline-none`
+                }
+              >
+                {({ active, checked }) => (
+                  <>
+                    <div className="flex w-full items-center justify-between">
+                      <div className="flex items-center justify-between w-full mr-10">
+                        <div className="text-sm">
+                          <RadioGroup.Label
+                            as="p"
+                            className={`font-medium flex flex-col gap-3 justify-center items-center w-36 ${
+                              checked ? "text-white" : "text-gray-900"
+                            }`}
+                          >
+                            <img src={plan.img} className="w-20" />
+                            {plan.name}
+                          </RadioGroup.Label>
+                        </div>
+                        <span>{plan.time}</span>
+                        <span>{plan.price}</span>
+                      </div>
+                      {checked && (
+                        <div className="shrink-0 text-white">
+                          <CheckIcon className="h-6 w-6" />
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </RadioGroup.Option>
+            ))}
+          </div>
+        </RadioGroup>
+      </div>
+
+      <div className="flex justify-end items-center gap-5 pt-5">
+        <ButtonModal
+          title={"Cancel"}
+          type={"button"}
+          sizeSm={true}
+          onClick={() => {
+            handleCloseModalTransport();
+          }}
+          className={"border-black border-[1px] w-20 text-black bg-slate-500"}
+        />
+        <ButtonModal
+          title={"Create"}
+          type={"submit"}
+          sizeSm={true}
+          className={"w-20 bg-[#1b84ff]"}
+        />
+      </div>
+    </form>
+  );
+
   return (
     <>
       <div className="line-top"></div>
@@ -332,17 +435,27 @@ export const CheckoutForm = () => {
           <MarkerIcon />
           <p className="text-[#ee4d2d] text-2xl">Delivery Address</p>
         </div>
-        <ButtonModal
-          title={"Add"}
-          type={"button"}
-          sizeSm={true}
-          onClick={() => setIsOpenAddress(true)}
-          textBlack
-          className={
-            "mt-5 bg-blue-200 text-[#1B84FF] hover:bg-[#1B84FF] hover:text-white w-fit"
-          }
-          icon={<FaPlusCircle />}
-        />
+        <div className="flex gap-10 items-center mt-5">
+          <ButtonModal
+            title={"Add"}
+            type={"button"}
+            sizeSm={true}
+            onClick={() => setIsOpenAddress(true)}
+            textBlack
+            className={
+              "bg-blue-200 text-[#1B84FF] hover:bg-[#1B84FF] hover:text-white w-fit"
+            }
+            icon={<FaPlusCircle />}
+          />
+          <div>
+            <p>
+              <span className="font-semibold">Pham Thi Phuong</span> |
+              0123456789
+            </p>
+            <p>áedfsdf</p>
+            <p>áedfsdf</p>
+          </div>
+        </div>
         <Modal
           isOpen={isOpenAddress}
           setIsOpen={handleCloseModalAddress}
@@ -445,28 +558,40 @@ export const CheckoutForm = () => {
             <p className="text-[#ee4d2d] text-2xl">Payment Methods</p>
           </div>
           <div className="mt-5">
-            <RadioGroup
+            <RadioGroupForm
               options={optionsRadioTypePayment}
               selectedOption={selectedOption}
               setSelectedOption={setSelectedOption}
             />
           </div>
         </div>
-        <div>
+        <div className="w-1/2">
           <div className="flex gap-5 items-center">
             <FcShipped className="text-3xl" />
             <p className="text-[#ee4d2d] text-2xl">Shipping Unit</p>
           </div>
-          <ButtonModal
-            title={"Add"}
-            type={"button"}
-            sizeSm={true}
-            onClick={() => router.push("/category")}
-            textBlack
-            className={
-              "mt-5 bg-blue-200 text-[#1B84FF] hover:bg-[#1B84FF] hover:text-white w-fit"
-            }
-            icon={<FaPlusCircle />}
+
+          <div className="flex gap-10 justify-between items-center mt-5">
+            <ButtonModal
+              title={"Edit"}
+              type={"button"}
+              sizeSm={true}
+              onClick={() => setIsOpenTransport(true)}
+              textBlack
+              className={
+                "bg-blue-200 text-[#1B84FF] hover:bg-[#1B84FF] hover:text-white w-fit"
+              }
+              icon={<FaPlusCircle />}
+            />
+            <div className="text-right">
+              <p>{selectedShipping.name}</p>
+              <p>{selectedShipping.price}</p>
+            </div>
+          </div>
+          <Modal
+            isOpen={isOpenTransport}
+            setIsOpen={handleCloseModalTransport}
+            content={ContentModalTransport}
           />
         </div>
       </div>
