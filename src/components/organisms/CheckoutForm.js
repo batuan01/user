@@ -4,16 +4,19 @@ import Cookies from "js-cookie";
 import { useRouter } from "next/router";
 import { Controller, useForm } from "react-hook-form";
 import {
+  DeleteAllProductCart,
   GetCouponBycode,
   ListCarts,
   ListDistricts,
   ListProvinces,
   ListWards,
+  OrderProduct,
+  PostVNPay,
 } from "../../utils/auth";
 import { CheckIcon, CouponIcon, MarkerIcon, PaymentIcon } from "../atoms/Icon";
 import { ButtonModal } from "../atoms/Button";
 import { FaPlusCircle } from "react-icons/fa";
-import { FcSmartphoneTablet, FcShipped } from "react-icons/fc";
+import { FcSmartphoneTablet, FcShipped, FcSurvey } from "react-icons/fc";
 import { TruncateText } from "../atoms/TruncateText";
 import { FormatPrice } from "../atoms/FormatPrice";
 import Notification from "../atoms/Notification";
@@ -29,19 +32,19 @@ const shipping = [
     name: "Giao Hàng Nhanh",
     img: "https://cdn.ntlogistics.vn/images/NTX/new_images/don-vi-giao-hang-nhanh-uy-tin-ghn-giao-hang-nhanh.jpg",
     time: "2-3 ngày",
-    price: "25.000đ",
+    price: 25000,
   },
   {
     name: "Giao Hàng Tiết Kiệm",
     img: "https://pos.nvncdn.com/4e732c-26/art/artCT/20181228_SbXO18pl4kMio4juj73bLjYK.png",
     time: "3-4 ngày",
-    price: "20.000đ",
+    price: 20000,
   },
   {
     name: "J&T Express",
     img: "https://pos.nvncdn.com/4e732c-26/art/artCT/20230227_wgp7wUbuOUJ7bTUG.png",
     time: "5-6 ngày",
-    price: "15.000đ",
+    price: 15000,
   },
 ];
 export const CheckoutForm = () => {
@@ -64,12 +67,6 @@ export const CheckoutForm = () => {
 
   const [selectedShipping, setSelectedShipping] = useState(shipping[0]);
 
-  const router = useRouter();
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
   const {
     register,
     handleSubmit,
@@ -80,6 +77,15 @@ export const CheckoutForm = () => {
     reset,
     formState: { errors },
   } = useForm();
+
+  const router = useRouter();
+  const value = getValues();
+  const storedIdCustomer = Cookies.get("id_customer");
+  let IdCustomer;
+  if (storedIdCustomer) {
+    IdCustomer = atob(storedIdCustomer);
+  }
+
   useEffect(() => {
     setBreadcrumb("Checkout");
   }, []);
@@ -104,10 +110,28 @@ export const CheckoutForm = () => {
     return color ? color.color_name : "";
   };
 
+  //lấy ra price
+  const getPrice = (colorId) => {
+    if (isListProduct && isListProduct.data) {
+      for (let item of isListProduct.data) {
+        const foundColor = item.product_colors.find(
+          (product) => product.color_id === colorId
+        );
+        if (foundColor) {
+          return foundColor.product_price;
+        }
+      }
+    }
+    return null;
+  };
+
   //tổng tiền
   function calculateTotalPrice(order) {
     let totalPrice = 0;
-    const discount = parseFloat(order.product_detail.product_sale) / 100;
+    let discount = 0;
+    if (order.product_detail.product_sale) {
+      discount = parseFloat(order.product_detail.product_sale) / 100;
+    }
 
     order.product_colors.forEach((color) => {
       if (color.color_id === order.color_id) {
@@ -142,7 +166,6 @@ export const CheckoutForm = () => {
     { value: "2", label: "Pay with VNPay" },
   ];
 
-  const handleCreateAddress = () => {};
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -203,9 +226,29 @@ export const CheckoutForm = () => {
     data: allWards?.wards,
   });
 
+  // useEffect(() => {
+  //   reset({
+  //     ward: "",
+  //     district: "",
+  //   });
+  //   setSelectedDistrict(null);
+  //   setSelectedWards(null);
+  // }, [selectedProvince]);
+
+  // useEffect(() => {
+  //   reset({
+  //     ward: "",
+  //   });
+  //   setSelectedWards(null);
+  // }, [selectedDistrict]);
+
   const handleCloseModalAddress = () => {
     setIsOpenAddress(false);
     reset();
+  };
+
+  const handleCreateAddress = () => {
+    setIsOpenAddress(false);
   };
 
   const ContentModalAddress = (
@@ -349,13 +392,10 @@ export const CheckoutForm = () => {
 
   const handleCloseModalTransport = () => {
     setIsOpenTransport(false);
-    reset();
   };
 
-  const handleCreateTransport = () => {};
-
   const ContentModalTransport = (
-    <form onSubmit={handleSubmit(handleCreateTransport)}>
+    <div>
       <p className="text-lg font-medium">Shipping Unit</p>
 
       <div className="mx-auto w-full px-4 py-10 min-w-[500px]">
@@ -391,7 +431,7 @@ export const CheckoutForm = () => {
                           </RadioGroup.Label>
                         </div>
                         <span>{plan.time}</span>
-                        <span>{plan.price}</span>
+                        <span>{FormatPrice(plan.price)}</span>
                       </div>
                       {checked && (
                         <div className="shrink-0 text-white">
@@ -409,23 +449,70 @@ export const CheckoutForm = () => {
 
       <div className="flex justify-end items-center gap-5 pt-5">
         <ButtonModal
-          title={"Cancel"}
+          title={"Update"}
           type={"button"}
           sizeSm={true}
           onClick={() => {
             handleCloseModalTransport();
           }}
-          className={"border-black border-[1px] w-20 text-black bg-slate-500"}
-        />
-        <ButtonModal
-          title={"Create"}
-          type={"submit"}
-          sizeSm={true}
           className={"w-20 bg-[#1b84ff]"}
         />
       </div>
-    </form>
+    </div>
   );
+
+  const PushOrder = async () => {
+    const dataSend = {
+      customer_id: Number(IdCustomer),
+      order_total: totalCostAllOrders + selectedShipping.price - dataCoupon,
+      order_status: 1,
+      payment_id: Number(selectedOption),
+      shipping_info: {
+        shipping_name: value.shipping_name,
+        shipping_address: `${value.specific_address}, ${value.ward?.name}, ${value.district?.name}, ${value.province?.name}`,
+        shipping_phone: value.shipping_phone,
+        shipping_notes: value.notes,
+      },
+      order_detail: isListProduct?.data?.map((item) => ({
+        product_id: item.product_detail.product_id,
+        color_id: item.color_id,
+        product_name: item.product_detail.product_name,
+        product_price: getPrice(item.color_id),
+        product_sales_quantity: item.product_quantity,
+      })),
+    };
+    const result = await OrderProduct(dataSend);
+    const payload = {
+      customer_id: dataSend.customer_id,
+    };
+    await DeleteAllProductCart(payload);
+    Notification.success("Order successfully!");
+    return result.data.order_id
+  };
+
+  const handleVnpayPayment = async ({orderID}) => {
+    try {
+      const payload = {
+        total: totalCostAllOrders + selectedShipping.price - dataCoupon,
+        fee: 0,
+        order_id: orderID,
+      };
+      const response = await PostVNPay(payload);
+      router.push(response.data);
+    } catch (error) {
+      console.error("Error:", error.message);
+    }
+  };
+
+  const CompleteOrder = async () => {
+    if (selectedOption === "1") {
+      await PushOrder();
+      router.push("/thanks");
+    } else {
+      const orderID = await PushOrder();
+      handleVnpayPayment({orderID});
+    }
+  };
 
   return (
     <>
@@ -437,7 +524,7 @@ export const CheckoutForm = () => {
         </div>
         <div className="flex gap-10 items-center mt-5">
           <ButtonModal
-            title={"Add"}
+            title={selectedWards ? "Update" : "Add"}
             type={"button"}
             sizeSm={true}
             onClick={() => setIsOpenAddress(true)}
@@ -447,14 +534,19 @@ export const CheckoutForm = () => {
             }
             icon={<FaPlusCircle />}
           />
-          <div>
-            <p>
-              <span className="font-semibold">Pham Thi Phuong</span> |
-              0123456789
-            </p>
-            <p>áedfsdf</p>
-            <p>áedfsdf</p>
-          </div>
+          {selectedWards ? (
+            <div>
+              <p>
+                <span className="font-semibold">{value.shipping_name}</span> |
+                <span className="ml-1">{value.shipping_phone}</span>
+              </p>
+              <p>{value.specific_address}</p>
+              <p>
+                {value.ward?.name}, {value.district?.name},
+                {value.province?.name}
+              </p>
+            </div>
+          ) : null}
         </div>
         <Modal
           isOpen={isOpenAddress}
@@ -522,13 +614,13 @@ export const CheckoutForm = () => {
         </table>
       </div>
 
-      <div className="bg-white px-10 py-5 mt-5">
-        <div className="flex gap-5 items-center">
-          <CouponIcon className="text-3xl w-7" />
-          <p className="text-[#ee4d2d] text-2xl">Coupon</p>
-        </div>
-        <div className="flex justify-between items-center gap-5 mt-5">
-          <div className="w-1/2 flex items-center gap-5">
+      <div className="bg-white px-10 py-5 mt-5 flex gap-10">
+        <div className="w-1/2">
+          <div className="flex gap-5 items-center">
+            <CouponIcon className="text-3xl w-7" />
+            <p className="text-[#ee4d2d] text-2xl">Coupon</p>
+          </div>
+          <div className="flex items-center gap-5 mt-5 w-3/4">
             <InputForm
               type="text"
               placeholder={"code"}
@@ -547,11 +639,7 @@ export const CheckoutForm = () => {
               onClick={handleGetCoupon}
             />
           </div>
-          <p className="font-semibold text-2xl">-155351</p>
         </div>
-      </div>
-
-      <div className="bg-white px-10 py-5 mt-5 flex gap-10">
         <div className="w-1/2">
           <div className="flex gap-5 items-center">
             <PaymentIcon className="text-3xl w-7" />
@@ -565,6 +653,20 @@ export const CheckoutForm = () => {
             />
           </div>
         </div>
+      </div>
+
+      <div className="bg-white px-10 py-5 mt-5 flex gap-10">
+        <div className="w-1/2">
+          <div className="flex gap-5 items-center">
+            <FcSurvey className="text-3xl w-7" />
+            <p className="text-[#ee4d2d] text-2xl">Notes</p>
+          </div>
+          <textarea
+            className="mt-5 resize-y rounded-sm w-full border border-stone-400 border-solid p-3"
+            {...register("notes")}
+          />
+        </div>
+
         <div className="w-1/2">
           <div className="flex gap-5 items-center">
             <FcShipped className="text-3xl" />
@@ -585,7 +687,7 @@ export const CheckoutForm = () => {
             />
             <div className="text-right">
               <p>{selectedShipping.name}</p>
-              <p>{selectedShipping.price}</p>
+              <p>{FormatPrice(selectedShipping.price)}</p>
             </div>
           </div>
           <Modal
@@ -606,19 +708,19 @@ export const CheckoutForm = () => {
           <div className="flex gap-10 items-center justify-between">
             <p className="font-normal text-base">Transport fee</p>
             <p className="font-normal text-base">
-              {FormatPrice(totalCostAllOrders)}
+              {FormatPrice(selectedShipping.price)}
             </p>
           </div>
           <div className="flex gap-10 items-center justify-between">
             <p className="font-normal text-base">Coupon</p>
-            <p className="font-normal text-base">
-              {FormatPrice(totalCostAllOrders)}
-            </p>
+            <p className="font-normal text-base">{FormatPrice(dataCoupon)}</p>
           </div>
           <div className="flex gap-10 items-center justify-between">
             <p className="font-normal text-base">Total payment</p>
             <p className="font-normal text-2xl text-[#ee4d2d]">
-              {FormatPrice(totalCostAllOrders)}
+              {FormatPrice(
+                totalCostAllOrders + selectedShipping.price - dataCoupon
+              )}
             </p>
           </div>
         </div>
@@ -626,7 +728,7 @@ export const CheckoutForm = () => {
       <div className="bg-white px-10 py-5 flex justify-end gap-10 border-t-[1px]">
         <button
           className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
-          //   onClick={CompleteOrder}
+          onClick={CompleteOrder}
         >
           Complete Order
         </button>

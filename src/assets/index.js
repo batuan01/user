@@ -91,6 +91,7 @@ const SERVICES = {
   /* <ORDER> */
   postOrderProduct: (payload) => mainRequest(`/order/`, payload, "post"),
   getOrderProduct: (payload) => mainRequest(`/order/${payload.customer_id}/`, payload, "get"),
+  updateOrderProduct: (payload) => mainRequest(`/order/${payload.order_id}/`, payload, "put"),
 
   /* <GALLERY> */
   getGalleries: (payload) =>

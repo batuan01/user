@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 
-export const RadioGroupForm = ({ options, selectedOption, setSelectedOption }) => {
+export const RadioGroupForm = ({
+  options,
+  selectedOption,
+  setSelectedOption,
+}) => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
   };
@@ -8,7 +12,7 @@ export const RadioGroupForm = ({ options, selectedOption, setSelectedOption }) =
   return (
     <div className="container-radio">
       <div className="radio-tile-group">
-        {options.map((option, index) => (
+        {options?.map((option, index) => (
           <div className="input-container" key={index}>
             <input
               id={option.label.toLowerCase()}

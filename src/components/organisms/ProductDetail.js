@@ -19,6 +19,7 @@ import {
   ListCarts,
 } from "../../utils/auth";
 import { useRouter } from "next/router";
+import { RadioGroupForm } from "../atoms/RadioGroup";
 
 export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -67,13 +68,13 @@ export const ProductDetail = () => {
     getColorName(item.color_id)
   );
   const dataColors = colorNames?.map((item, index) => ({
-    color: item,
-    color_id: detailProduct?.data?.product_colors[index].color_id,
+    label: item,
+    value: String(detailProduct?.data?.product_colors[index].color_id),
   }));
 
   // lấy ra quantity với màu đã chọn
   const quantityColor = detailProduct?.data?.product_colors?.find(
-    (item) => item.color_id === selectedColor
+    (item) => String(item.color_id) === selectedColor
   )?.quantity;
 
   //lấy ra data detail
@@ -83,6 +84,7 @@ export const ProductDetail = () => {
       setLoad(false);
       setDetailProduct(dataDetail);
       setBreadcrumb(dataDetail?.data.product_name);
+      setSelectedColor(String(dataDetail?.data.product_colors[0].color_id));
     };
     const fetchGalleries = async () => {
       const dataGalleries = await GetGalleries({ product_id: params.id });
@@ -124,7 +126,7 @@ export const ProductDetail = () => {
         products: [
           {
             product_id: params.id,
-            color_id: selectedColor,
+            color_id: Number(selectedColor),
             product_quantity: quantity,
           },
         ],
@@ -145,7 +147,7 @@ export const ProductDetail = () => {
         products: [
           {
             product_id: params.id,
-            color_id: selectedColor,
+            color_id: Number(selectedColor),
             product_quantity: quantity,
           },
         ],
@@ -157,6 +159,21 @@ export const ProductDetail = () => {
       Notification.error("Please log in to purchase!");
     }
     router.push("/cart");
+  };
+
+  const getPrice = (colorId) => {
+    if (detailProduct && detailProduct.data) {
+      const productColors = detailProduct.data.product_colors;
+      if (productColors) {
+        const foundColor = productColors.find(
+          (product) => product.color_id === colorId
+        );
+        if (foundColor) {
+          return foundColor.product_price;
+        }
+      }
+    }
+    return null;
   };
 
   return (
@@ -191,25 +208,35 @@ export const ProductDetail = () => {
                   <span className="px-2.5 py-0.5 mr-3 text-xs text-blue-600 bg-blue-100 dark:bg-gray-700 rounded-xl dark:text-gray-200">
                     New Arrival
                   </span>
-                  <span className="px-2.5 py-0.5 text-xs text-white bg-[#FF6868] dark:bg-gray-700 rounded-xl dark:text-gray-200">
-                    Sale({detailProduct?.data?.product_sale}%)
-                  </span>
+                  {detailProduct?.data?.product_sale ? (
+                    <span className="px-2.5 py-0.5 text-xs text-white bg-[#FF6868] dark:bg-gray-700 rounded-xl dark:text-gray-200">
+                      Sale({detailProduct?.data?.product_sale}%)
+                    </span>
+                  ) : null}
                   <h2 className="max-w-xl mt-6 mb-6 text-xl font-semibold leading-loose tracking-wide text-gray-700 md:text-2xl dark:text-gray-300">
                     {detailProduct?.data?.product_name}
                   </h2>
 
                   <p className="inline-block text-2xl font-semibold text-gray-700 dark:text-gray-400 ">
-                    <span>
-                      {FormatPrice(
-                        detailProduct?.data?.product_price -
-                          (detailProduct?.data?.product_price *
-                            detailProduct?.data?.product_sale) /
-                            100
-                      )}
-                    </span>
-                    <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
-                      {FormatPrice(detailProduct?.data?.product_price)}
-                    </span>
+                    {detailProduct?.data?.product_sale ? (
+                      <span>
+                        {FormatPrice(
+                          getPrice(Number(selectedColor)) -
+                            (getPrice(Number(selectedColor)) *
+                              Number(detailProduct?.data?.product_sale)) /
+                              100
+                        )}
+                      </span>
+                    ) : (
+                      <span>
+                        {FormatPrice(getPrice(Number(selectedColor)))}
+                      </span>
+                    )}
+                    {detailProduct?.data?.product_sale ? (
+                      <span className="ml-3 text-base font-normal text-gray-500 line-through dark:text-gray-400">
+                        {FormatPrice(getPrice(Number(selectedColor)))}
+                      </span>
+                    ) : null}
                   </p>
                 </div>
                 <div className="mb-6">
@@ -289,9 +316,10 @@ export const ProductDetail = () => {
                   <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
                     Color:
                   </h2>
-                  <ButtonRadio
-                    dataColors={dataColors}
-                    setSelectedColor={setSelectedColor}
+                  <RadioGroupForm
+                    options={dataColors}
+                    selectedOption={selectedColor}
+                    setSelectedOption={setSelectedColor}
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-start gap-10 mb-6">

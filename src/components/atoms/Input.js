@@ -3,16 +3,15 @@ import React, { useEffect, useState, useCallback } from "react";
 export const InputQuantity = ({ quantity, setQuantity, maxQuantity }) => {
   const handleIncrement = () => {
     if (quantity < maxQuantity) {
-      setQuantity(quantity + 1);
+      setQuantity(Number(quantity) + 1);
     }
   };
 
   const handleDecrement = () => {
     if (quantity > 1) {
-      setQuantity(quantity - 1);
+      setQuantity(Number(quantity) - 1);
     }
   };
-
   const handleChange = (e) => {
     if (e.target.value <= maxQuantity) {
       const newValue = e.target.value.replace(/\D/g, "");
