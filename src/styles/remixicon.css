@@ -344,10 +344,10 @@ img {
 /*=============== BREAKPOINTS ===============*/
 /* For medium devices */
 @media screen and (min-width: 576px) {
-  .search,
+  /* .search,
   .login {
     padding-top: 10rem;
-  }
+  } */
 
   .search__form {
     max-width: 450px;

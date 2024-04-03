@@ -20,6 +20,7 @@ import {
 } from "../../utils/auth";
 import { useRouter } from "next/router";
 import { RadioGroupForm } from "../atoms/RadioGroup";
+import { TruncateText } from "../atoms/TruncateText";
 
 export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -29,7 +30,7 @@ export const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState();
 
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
-
+  
   const router = useRouter();
   const params = router.query;
   const {
@@ -175,6 +176,10 @@ export const ProductDetail = () => {
     }
     return null;
   };
+
+  useEffect(()=>{
+    setQuantity(1)
+  },[selectedColor])
 
   return (
     <>
@@ -373,9 +378,9 @@ export const ProductDetail = () => {
             </div>
             <div className="p-6 text-center">
               <h4 className="block mb-2 font-sans text-2xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-                {item.product_name}
+                {TruncateText(item.product_name, 50)}
               </h4>
-              <p className="">{FormatPrice(item.product_price)}</p>
+              <p className="">{FormatPrice(item.product_colors[0].product_price)}</p>
             </div>
           </div>
         ))}

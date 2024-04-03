@@ -212,8 +212,12 @@ export const Cart = () => {
 
       {isListProduct?.data?.length === 0 && (
         <>
-          <div className="h-64 flex justify-center items-center font-semibold">
-            Không có sản phẩm
+          <div className="flex justify-center flex-col gap-10 items-center w-full h-full py-10">
+            <img
+              src="https://taphoa.cz/static/media/cart-empty-img.8b677cb3.png"
+              className="w-[50%]"
+            />
+            <p className="font-semibold">No products</p>
           </div>
         </>
       )}

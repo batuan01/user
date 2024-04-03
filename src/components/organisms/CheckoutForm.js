@@ -469,13 +469,14 @@ export const CheckoutForm = () => {
       payment_id: Number(selectedOption),
       shipping_info: {
         shipping_name: value.shipping_name,
-        shipping_address: `${value.specific_address}, ${value.ward?.name}, ${value.district?.name}, ${value.province?.name}`,
+        shipping_address: `${value.specific_address ? `${value.specific_address}, ` : ''} ${value.ward?.name}, ${value.district?.name}, ${value.province?.name}`,
         shipping_phone: value.shipping_phone,
         shipping_notes: value.notes,
       },
       order_detail: isListProduct?.data?.map((item) => ({
         product_id: item.product_detail.product_id,
         color_id: item.color_id,
+        product_image: item.product_detail.product_image,
         product_name: item.product_detail.product_name,
         product_price: getPrice(item.color_id),
         product_sales_quantity: item.product_quantity,
@@ -490,7 +491,7 @@ export const CheckoutForm = () => {
     return result.data.order_id
   };
 
-  const handleVnpayPayment = async ({orderID}) => {
+  const handleVnpayPayment = async ({ orderID }) => {
     try {
       const payload = {
         total: totalCostAllOrders + selectedShipping.price - dataCoupon,
@@ -510,7 +511,7 @@ export const CheckoutForm = () => {
       router.push("/thanks");
     } else {
       const orderID = await PushOrder();
-      handleVnpayPayment({orderID});
+      handleVnpayPayment({ orderID });
     }
   };
 

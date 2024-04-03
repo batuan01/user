@@ -5,6 +5,7 @@ import Cookies from "js-cookie";
 import {
   GetCustomerDetail,
   GetOrderProduct,
+  PutOrderProduct,
   UpdateCustomer,
 } from "../../utils/auth";
 import { Tab } from "@headlessui/react";
@@ -16,17 +17,24 @@ import { ButtonModal } from "../atoms/Button";
 import { FormatPrice } from "../atoms/FormatPrice";
 import { ConvertFirebase } from "../../utils/firebase";
 import Notification from "../atoms/Notification";
+import { TruncateText } from "../atoms/TruncateText";
+import Link from "next/link";
 
 export const Account = () => {
-  const { setLoad } = useContext(AuthContext);
+  const { setLoad, setBreadcrumb } = useContext(AuthContext);
   const [typeForm, setTypeForm] = useState(false);
   const [selectedFilesInfo, setSelectedFilesInfo] = useState([]);
   const [dataInfo, setDataInfo] = useState();
   const [dataOrder, setDataOrder] = useState();
   const [isReload, setIsReload] = useState(false);
+  const [isReloadOrder, setIsReloadOrder] = useState(false);
 
   const router = useRouter();
   const params = router.query;
+
+  useEffect(() => {
+    setBreadcrumb("Account");
+  }, []);
 
   const {
     register,
@@ -71,11 +79,10 @@ export const Account = () => {
     " Waiting for delivery",
     "Complete",
     "Cancelled",
-    "Return/Refund",
   ];
 
   const noProduct = (
-    <div className="flex justify-center flex-col gap-10 items-center w-full h-full pt-10">
+    <div className="flex justify-center flex-col gap-10 items-center w-full h-full py-10">
       <img
         src="https://taphoa.cz/static/media/cart-empty-img.8b677cb3.png"
         className="w-[50%]"
@@ -89,34 +96,103 @@ export const Account = () => {
       const dataOrder = await GetOrderProduct({ customer_id: IdCustomer });
       setLoad(false);
       setDataOrder(dataOrder);
-      console.log(dataOrder);
     };
 
     if (IdCustomer) {
       fetchOrder();
     }
-  }, [IdCustomer]);
+  }, [IdCustomer, isReloadOrder]);
 
-  const listProduct = ({ data }) => {
+  const getColorName = (colorId) => {
+    const color = dataOrder?.colors?.find((item) => item.color_id === colorId);
+    return color ? color.color_name : "";
+  };
+
+  const handleReturnorRefund = async (id) => {
+    setLoad(true);
+    const payload = {
+      order_id: Number(id),
+      order_status: 5,
+    };
+    await PutOrderProduct(payload);
+    Notification.success("Cancel order successfully!");
+    setLoad(false);
+    setIsReloadOrder(!isReloadOrder);
+  };
+
+  const ListProduct = (data) => {
     return (
-      <div className="transform transition duration-300 hover:scale-105 hover:shadow-lg">
-        <div className="flex items-center justify-between  p-5 bg-[#f2e8e8]">
-          <div className="flex gap-4">
-            <img
-              src="https://encrypted-tbn3.gstatic.com/shopping?q=tbn:ANd9GcTFz6ITuCujVMoiuvRoLEQyHVwXFHkfqtWSMe5wU9783RN_v7DS7T-Pk_VDpVSK3qlwTBGJQrbdHpQ8L2EWFkXJSJdAevX2AmcATX41O-wGG94SCZ0gz1O6XHv1vmCikozSnb9BJ2bhiw&usqp=CAc"
-              className="w-16 h-auto"
-            />
-            <p className="text-sm font-medium">123123</p>
+      <>
+        {data.map((item, index) => (
+          <div className="" key={index}>
+            <div className="flex justify-between text-lg font-semibold px-10 border-b border-solid py-2">
+              <p className="w-1/2">Product</p>
+              <p className="w-1/4 text-center">Shipping</p>
+              <p className="w-1/4 text-right">Price</p>
+            </div>
+
+            {item.order_detail.map((detail, detailIndex) => (
+              <Link href={"/product/" + detail.product_id}>
+                <div
+                  className="flex items-center justify-between p-5 hover:bg-[#e0caca] hover:scale-105 hover:shadow-lg transform transition duration-300 cursor-pointer border-b border-solid"
+                  key={detailIndex}
+                >
+                  <div className="flex gap-4 w-1/2">
+                    <img src={detail.product_image} className="w-16 h-auto" />
+                    <div>
+                      <p className="text-base font-semibold mb-1">
+                        {TruncateText(detail.product_name, 50)}
+                      </p>
+                      <p className="text-sm font-medium mb-1">
+                        {getColorName(detail.color_id)}
+                      </p>
+                      <p className="text-sm font-medium">
+                        x{detail.product_sales_quantity}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="w-1/4 text-center">
+                    <p>
+                      <span className="font-semibold mr-1">
+                        {item.shipping.shipping_name}
+                      </span>
+                      |
+                      <span className="ml-1">
+                        {item.shipping.shipping_phone}
+                      </span>
+                    </p>
+                    <p>{item.shipping.shipping_address}</p>
+                    <p>{item.shipping.shipping_notes}</p>
+                  </div>
+
+                  <p className="w-1/4 text-right">
+                    {FormatPrice(detail.product_price)}
+                  </p>
+                </div>
+              </Link>
+            ))}
+
+            <div className="flex justify-between items-center gap-4 p-3 bg-[#ffe6c7] mb-3">
+              <div>
+                {item.order_status === 1 || item.order_status === 2 ? (
+                  <button
+                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
+                    onClick={() => handleReturnorRefund(item.order_id)}
+                  >
+                    Request a Return/Refund
+                  </button>
+                ) : null}
+              </div>
+              <p>
+                <span>Total payment:</span>{" "}
+                <span className="font-bold text-2xl text-[#ff6000]">
+                  {FormatPrice(item.order_total)}
+                </span>
+              </p>
+            </div>
           </div>
-          <p>{FormatPrice(20000)}</p>
-        </div>
-        <div className="flex justify-end items-center gap-4 p-3 bg-[#ffe6c7] mb-3">
-          <p className="">Thành tiền:</p>
-          <p className="font-bold text-2xl text-[#ff6000]">
-            {FormatPrice(20000)}
-          </p>
-        </div>
-      </div>
+        ))}
+      </>
     );
   };
 
@@ -142,7 +218,7 @@ export const Account = () => {
   };
 
   return (
-    <div className="container mb-10 mt-10 min-w-[1200px]">
+    <div className="mx-20 my-10 min-w-[1200px]">
       <div className="flex justify-start gap-10 items-start">
         <div className="w-1/6">
           <div className=" flex gap-2 items-center">
@@ -197,9 +273,60 @@ export const Account = () => {
                   ))}
                 </Tab.List>
                 <Tab.Panels className="mt-2 min-h-[370px] bg-white">
-                  <Tab.Panel>{listProduct}</Tab.Panel>
-                  <Tab.Panel className="h-full">
-                    <div className="w-full h-full">{noProduct}</div>
+                  <Tab.Panel>
+                    {dataOrder.data.length > 0
+                      ? ListProduct(dataOrder.data)
+                      : noProduct}
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    {dataOrder.data.filter((item) => item.order_status === 1)
+                      .length > 0
+                      ? ListProduct(
+                          dataOrder.data.filter(
+                            (item) => item.order_status === 1
+                          )
+                        )
+                      : noProduct}
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    {dataOrder.data.filter((item) => item.order_status === 2)
+                      .length > 0
+                      ? ListProduct(
+                          dataOrder.data.filter(
+                            (item) => item.order_status === 2
+                          )
+                        )
+                      : noProduct}
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    {dataOrder.data.filter((item) => item.order_status === 3)
+                      .length > 0
+                      ? ListProduct(
+                          dataOrder.data.filter(
+                            (item) => item.order_status === 3
+                          )
+                        )
+                      : noProduct}
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    {dataOrder.data.filter((item) => item.order_status === 4)
+                      .length > 0
+                      ? ListProduct(
+                          dataOrder.data.filter(
+                            (item) => item.order_status === 4
+                          )
+                        )
+                      : noProduct}
+                  </Tab.Panel>
+                  <Tab.Panel>
+                    {dataOrder.data.filter((item) => item.order_status === 5)
+                      .length > 0
+                      ? ListProduct(
+                          dataOrder.data.filter(
+                            (item) => item.order_status === 5
+                          )
+                        )
+                      : noProduct}
                   </Tab.Panel>
                 </Tab.Panels>
               </Tab.Group>
