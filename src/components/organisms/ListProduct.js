@@ -77,7 +77,9 @@ const Product = ({ data }) => {
               </h3>
               {data.product_sale || data.product_sale > 0 ? (
                 <>
-                  <del>{FormatPrice(filteredDataColor[0].product_price)}</del>
+                  <p className="text-center pb-2 text-slate-500">
+                    <del>{FormatPrice(filteredDataColor[0].product_price)}</del>
+                  </p>
                   <p className="card__status">
                     {FormatPrice(
                       filteredDataColor[0].product_price -
@@ -197,6 +199,7 @@ export const ListProductHome = () => {
 export const AllProducts = ({ category }) => {
   const [dataAll, setDataAll] = useState();
   const [selectedSort, setSelectedSort] = useState(null);
+  const [dataSort, setDataSort] = useState();
   const router = useRouter();
   const params = router.query;
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
@@ -210,6 +213,7 @@ export const AllProducts = ({ category }) => {
         setDataAll(result);
         setLoad(false);
         setBreadcrumb("All Products");
+        setDataSort(result?.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -225,6 +229,7 @@ export const AllProducts = ({ category }) => {
         setDataAll(result);
         setLoad(false);
         setBreadcrumb(result?.category_name);
+        setDataSort(result?.data.data);
       } catch (error) {
         console.error("Error fetching data:", error);
       }
@@ -235,13 +240,38 @@ export const AllProducts = ({ category }) => {
     }
   }, [paginationPage, params.id]);
 
-  const dataSelect = [{ name: "Sắp xếp từ A-Z" }, { name: "Sắp xếp từ Z_A" }];
+  const dataSelect = [{ name: "Sort A to Z" }, { name: "Sort Z to A" }];
 
   let ContentSelect = [];
   pushData({
     arrayForm: ContentSelect,
     data: dataSelect,
   });
+
+  const sortAscending = (products) => {
+    return products
+      .slice()
+      .sort((a, b) => a.product_name.localeCompare(b.product_name));
+  };
+
+  // Hàm sắp xếp theo thứ tự giảm dần theo productName
+  const sortDescending = (products) => {
+    return products
+      .slice()
+      .sort((a, b) => b.product_name.localeCompare(a.product_name));
+  };
+
+  const handleSortProduct = (value) => {
+    setSelectedSort(value);
+    if (value.name === "Sort A to Z") {
+      const sortedProducts = sortAscending(dataAll?.data.data);
+      setDataSort(sortedProducts);
+    } else {
+      const sortedProductsDescending = sortDescending(dataAll?.data.data);
+      setDataSort(sortedProductsDescending);
+    }
+  };
+
   return (
     <>
       <p className="text-center text-2xl font-semibold pt-5">
@@ -254,6 +284,7 @@ export const AllProducts = ({ category }) => {
             content={ContentSelect}
             onChange={(value) => {
               setSelectedSort(value);
+              handleSortProduct(value);
             }}
           />
         </div>
@@ -262,7 +293,7 @@ export const AllProducts = ({ category }) => {
       {dataAll?.data.data?.length > 0 ? (
         <>
           <ul className="cards">
-            {dataAll?.data?.data.map((item, index) => (
+            {dataSort?.map((item, index) => (
               <Product data={item} key={index} />
             ))}
           </ul>
