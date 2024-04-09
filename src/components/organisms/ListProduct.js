@@ -361,3 +361,61 @@ export const AllSearchProducts = ({}) => {
     </>
   );
 };
+
+
+
+// new product
+// export default function Home() {
+//   const [isHovered, setIsHovered] = useState(false);
+
+//   const handleMouseLeave = () => {
+//     setIsHovered(false);
+//   };
+
+//   return (
+//     <main className="h-[100vh] p-10">
+//       <div className="">
+//         <div class=" h-[420px] w-[230px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl cursor-pointer hover_card">
+//           <div class="px-2 py-1 bg-red-700 rounded-md text-xs text-white w-fit">
+//             213
+//           </div>
+
+//           <div className="py-4 card_img">
+//             <img
+//               src="https://media-cdn-v2.laodong.vn/storage/newsportal/2023/8/26/1233821/Giai-Nhi-1--Nang-Tre.jpg"
+//               alt="product"
+//               className="w-auto h-44"
+//             />
+//           </div>
+//           <p class="text-sm text-black dark:text-white overflow-hidden overflow-ellipsis leading-5 line-clamp-2 font-semibold">
+//             12sad asd324234 23423444444 444444444444 444444444 44444444 4444
+//           </p>
+//           <div class="flex items-center flex-wrap gap-2 mb-2">
+//             <span class="font-semibold text-base text-red-700">
+//               27.390.000₫
+//             </span>
+//             <del class="text-sm text-gray-500">33.990.000₫</del>
+//           </div>
+//           <div class="flex items-center flex-wrap gap-6 mb-3">
+//             <span className="px-4 py-2 bg-gray-200 rounded-md text-xs text-gray-600">
+//               Mới 100%
+//             </span>
+
+//             <div class="product-rate">
+//               <div class="star-rating"></div>
+//             </div>
+//           </div>
+//           <div className="flex justify-center">
+//             <button
+//               className={`snip0040 red ${isHovered ? "hover" : ""}`}
+//               onMouseLeave={handleMouseLeave}
+//             >
+//               <span>Add to Cart</span>
+//               <i class="ion-ios-cart"></i>
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </main>
+//   );
+// }

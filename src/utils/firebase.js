@@ -3,6 +3,12 @@ import { getAnalytics } from "firebase/analytics";
 import { getStorage } from "firebase/storage";
 import { useState } from "react";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
+import {
+  getAuth,
+  signInWithPopup,
+  signInWithRedirect,
+  GoogleAuthProvider,
+} from "firebase/auth";
 
 export const ConvertFirebase = ({ images }) => {
   const firebaseConfig = {
@@ -35,4 +41,21 @@ export const ConvertFirebase = ({ images }) => {
     return urls;
   };
   return handleUpload();
+};
+
+export const handleGoogleSignUp = async (successCallback) => {
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  try {
+    // const userCredential = await signInWithPopup(auth, provider);
+    const userCredential = await signInWithPopup(auth, provider);
+    const user = userCredential.user;
+
+    if (successCallback && typeof successCallback === "function") {
+      successCallback(user);
+    }
+  } catch (error) {
+    console.error("Google Sign-In Error:", error);
+    throw error;
+  }
 };

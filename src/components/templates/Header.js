@@ -40,7 +40,6 @@ export const Header = () => {
 
   const toggleLogin = () => {
     setIsShowLogin(!isShowLogin);
-    // router.reload();
   };
 
   const pathname = router.pathname;
@@ -130,9 +129,9 @@ export const Header = () => {
     <>
       <header className="header" id="header">
         <nav className="nav container">
-          <Link href="/" className="nav__logo">
-            {/* <img src="https://th.bing.com/th/id/OIG1.9kH65o9ek9tWmt2AeFDR?pid=ImgGn" className="h-[88px]" /> */}
-            TGDD
+          <Link href="/" className="nav__logo flex items-center">
+            <img src="./logo.png" className="h-[80px] w-auto " />
+            
           </Link>
 
           <div

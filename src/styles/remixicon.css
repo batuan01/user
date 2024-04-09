@@ -129,13 +129,15 @@ img {
 
 /*=============== HEADER & NAV ===============*/
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--body-color);
-  box-shadow: 0 2px 16px hsla(230, 75%, 32%, 0.15);
+  /* background-color: var(--body-color); */
+  box-shadow: 0 2px 16px hsla(230, 75%, 32%, 0.25);
   z-index: var(--z-fixed);
+  background: linear-gradient(#b6c0c5, #112d60);
+  color: white;
 }
 
 .nav {
