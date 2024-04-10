@@ -19,6 +19,7 @@ import { ConvertFirebase } from "../../utils/firebase";
 import Notification from "../atoms/Notification";
 import { TruncateText } from "../atoms/TruncateText";
 import Link from "next/link";
+import { FaArrowRightFromBracket } from "react-icons/fa6";
 
 export const Account = () => {
   const { setLoad, setBreadcrumb } = useContext(AuthContext);
@@ -217,6 +218,12 @@ export const Account = () => {
     setIsReload(!isReload);
   };
 
+  const Signout = () => {
+    Cookies.remove("token");
+    Cookies.remove("id_customer");
+    router.push("/");
+  };
+
   return (
     <div className="mx-20 my-10 min-w-[1200px]">
       <div className="flex justify-start gap-10 items-start">
@@ -248,6 +255,13 @@ export const Account = () => {
                 <FcSurvey className="w-7 h-7" />
                 <span>Purchase Order</span>
               </li>
+              <li
+                className="flex items-center gap-4 mt-3 cursor-pointer bg-slate-300 p-2 rounded-md"
+                onClick={Signout}
+              >
+                <FaArrowRightFromBracket className="w-5 h-5" />
+                <span>Signout</span>
+              </li>
             </ul>
           </div>
         </div>
@@ -274,12 +288,12 @@ export const Account = () => {
                 </Tab.List>
                 <Tab.Panels className="mt-2 min-h-[370px] bg-white">
                   <Tab.Panel>
-                    {dataOrder.data.length > 0
+                    {dataOrder?.data.length > 0
                       ? ListProduct(dataOrder.data)
                       : noProduct}
                   </Tab.Panel>
                   <Tab.Panel>
-                    {dataOrder.data.filter((item) => item.order_status === 1)
+                    {dataOrder?.data.filter((item) => item.order_status === 1)
                       .length > 0
                       ? ListProduct(
                           dataOrder.data.filter(
@@ -289,7 +303,7 @@ export const Account = () => {
                       : noProduct}
                   </Tab.Panel>
                   <Tab.Panel>
-                    {dataOrder.data.filter((item) => item.order_status === 2)
+                    {dataOrder?.data.filter((item) => item.order_status === 2)
                       .length > 0
                       ? ListProduct(
                           dataOrder.data.filter(
@@ -299,7 +313,7 @@ export const Account = () => {
                       : noProduct}
                   </Tab.Panel>
                   <Tab.Panel>
-                    {dataOrder.data.filter((item) => item.order_status === 3)
+                    {dataOrder?.data.filter((item) => item.order_status === 3)
                       .length > 0
                       ? ListProduct(
                           dataOrder.data.filter(
@@ -309,7 +323,7 @@ export const Account = () => {
                       : noProduct}
                   </Tab.Panel>
                   <Tab.Panel>
-                    {dataOrder.data.filter((item) => item.order_status === 4)
+                    {dataOrder?.data.filter((item) => item.order_status === 4)
                       .length > 0
                       ? ListProduct(
                           dataOrder.data.filter(
@@ -319,7 +333,7 @@ export const Account = () => {
                       : noProduct}
                   </Tab.Panel>
                   <Tab.Panel>
-                    {dataOrder.data.filter((item) => item.order_status === 5)
+                    {dataOrder?.data.filter((item) => item.order_status === 5)
                       .length > 0
                       ? ListProduct(
                           dataOrder.data.filter(

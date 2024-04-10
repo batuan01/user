@@ -12,12 +12,12 @@ export const Footer = () => {
                 <img src="./logo.png" className="w-40" />
               </div>
 
-              <p className="mt-4 text-gray-500">
+              <p className="mt-4 text-gray-500 text-center">
                 Thank you for choosing our store. We strive to provide you with
                 the best experience possible.
               </p>
 
-              <ul className="mt-8 flex gap-6 justify-center">
+              {/* <ul className="mt-8 flex gap-6 justify-center">
                 <li>
                   <Link
                     href={"/"}
@@ -25,7 +25,7 @@ export const Footer = () => {
                     target="_blank"
                     className="text-gray-700 transition hover:opacity-75"
                   >
-                    <Facebook className="w-7 h-7 cursor-pointer" />
+                    <Facebook className={"w-7 h-7 cursor-pointer"} />
                   </Link>
                 </li>
 
@@ -36,7 +36,7 @@ export const Footer = () => {
                     target="_blank"
                     className="text-gray-700 transition hover:opacity-75"
                   >
-                    <Instagram className="w-7 h-7 cursor-pointer" />
+                    <Instagram className={"w-7 h-7 cursor-pointer"} />
                   </Link>
                 </li>
 
@@ -47,63 +47,24 @@ export const Footer = () => {
                     target="_blank"
                     className="text-gray-700 transition hover:opacity-75"
                   >
-                    <Twitter className="w-7 h-7 cursor-pointer" />
+                    <Twitter className={"w-7 h-7 cursor-pointer"} />
                   </Link>
                 </li>
-              </ul>
+              </ul> */}
             </div>
 
-            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-4">
+            <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:col-span-2 lg:grid-cols-3">
               <div>
                 <p className="font-semibold text-gray-900">Services</p>
 
                 <ul className="mt-6 space-y-4 text-sm">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href={"/news"}
                       className="text-gray-700 transition hover:opacity-75"
                     >
-                      1on1 Coaching{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      Company Review{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Accounts Review{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      HR Consulting{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      SEO Optimisation{" "}
-                    </a>
+                      News
+                    </Link>
                   </li>
                 </ul>
               </div>
@@ -121,26 +82,6 @@ export const Footer = () => {
                       About{" "}
                     </a>
                   </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Meet the Team{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Accounts Review{" "}
-                    </a>
-                  </li>
                 </ul>
               </div>
 
@@ -149,79 +90,12 @@ export const Footer = () => {
 
                 <ul className="mt-6 space-y-4 text-sm">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href={"/contact"}
                       className="text-gray-700 transition hover:opacity-75"
                     >
-                      {" "}
-                      Contact{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      FAQs{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Live Chat{" "}
-                    </a>
-                  </li>
-                </ul>
-              </div>
-
-              <div>
-                <p className="font-semibold text-gray-900">Legal</p>
-
-                <ul className="mt-6 space-y-4 text-sm">
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Accessibility{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Returns Policy{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Refund Policy{" "}
-                    </a>
-                  </li>
-
-                  <li>
-                    <a
-                      href="#"
-                      className="text-gray-700 transition hover:opacity-75"
-                    >
-                      {" "}
-                      Hiring Statistics{" "}
-                    </a>
+                      Contact
+                    </Link>
                   </li>
                 </ul>
               </div>
