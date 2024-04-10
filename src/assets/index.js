@@ -39,6 +39,7 @@ const SERVICES = {
   /* <CUSTOMERS> */
   loginCustomer: (payload) => mainRequest(`/customer/login/`, payload, "post"),
   signupCustomer: (payload) => mainRequest(`/customer/`, payload, "post"),
+  signupGoogle: (payload) => mainRequest(`/customer/google/`, payload, "post"),
   getCustomerDetail: (payload) =>
     mainRequest(`/customer/detail/${payload.customer_id}/`, payload, "get"),
   updateCustomer: (payload) =>
@@ -90,8 +91,10 @@ const SERVICES = {
 
   /* <ORDER> */
   postOrderProduct: (payload) => mainRequest(`/order/`, payload, "post"),
-  getOrderProduct: (payload) => mainRequest(`/order/${payload.customer_id}/`, payload, "get"),
-  updateOrderProduct: (payload) => mainRequest(`/order/${payload.order_id}/`, payload, "put"),
+  getOrderProduct: (payload) =>
+    mainRequest(`/order/${payload.customer_id}/`, payload, "get"),
+  updateOrderProduct: (payload) =>
+    mainRequest(`/order/${payload.order_id}/`, payload, "put"),
 
   /* <GALLERY> */
   getGalleries: (payload) =>

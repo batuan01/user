@@ -1,49 +1,41 @@
 import { FaArrowRight } from "react-icons/fa";
 import AOS from "aos";
 import "aos/dist/aos.css";
-import { useEffect } from "react";
-
-export const ProductTop = () => {
-  return (
-    <>
-      <div className="relative overflow-hidden my-8 flex-1 shop">
-        <div className="shop-img">
-          <img
-            src="https://th.bing.com/th/id/R.6680f97da37ded06743ab7040ba7d872?rik=GtlBwlzFq4plVQ&pid=ImgRaw&r=0"
-            alt=""
-          />
-        </div>
-        <div className="shop-body">
-          <h3>
-            Cameras
-            <br />
-            Collection
-          </h3>
-          <a href="#" className="cta-btn">
-            Shop now <FaArrowRight />
-          </a>
-        </div>
-      </div>
-    </>
-  );
-};
+import { useEffect, useState } from "react";
+import { CarouselImg } from "../molecules/CarouselImg";
 
 export const ListProductTop = () => {
+  const [items, setItems] = useState();
   useEffect(() => {
-    AOS.init();
-    AOS.refresh();
+    const data = [
+      {
+        slider_image:
+          "https://bizweb.dktcdn.net/100/177/937/themes/881538/assets/slide-img4.png?1712416429944",
+      },
+      {
+        slider_image:
+          "https://bizweb.dktcdn.net/100/177/937/themes/881538/assets/slide-img5.png?1712416429944",
+      },
+      {
+        slider_image:
+          "https://bizweb.dktcdn.net/100/177/937/themes/881538/assets/slide-img1.png?1712416429944",
+      },
+      {
+        slider_image:
+          "https://thietkehaithanh.com/wp-content/uploads/2019/06/thietkehaithanh-banner-1-1.jpg",
+      },
+    ];
+    const itemsImage = data.map((item, index) => (
+      <div key={index} className="mx-2">
+        <img src={item.slider_image} className="h-52 rounded-lg" />
+      </div>
+    ));
+    setItems(itemsImage);
   }, []);
-  return (
-    <section className="justify-between grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-3 gap-10">
-      <div data-aos="fade-right">
-        <ProductTop />
-      </div>
-      <div data-aos="zoom-in">
-        <ProductTop />
-      </div>
-      <div data-aos="fade-left">
-        <ProductTop />
-      </div>
-    </section>
-  );
+  const responsive = {
+    0: { items: 1 },
+    768: { items: 2 },
+    1024: { items: 2 },
+  };
+  return <CarouselImg responsive={responsive} items={items} />;
 };

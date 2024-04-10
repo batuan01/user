@@ -1,7 +1,6 @@
 import { ListProductTop } from "../components/organisms/ProductTop";
 import { HaderSection } from "../components/organisms/HaderSection";
 import { ListProductHome } from "../components/organisms/ListProduct";
-import { ListCategoryBottom } from "../components/molecules/ListCategoryBottom";
 import { LoadingAllPage } from "../components/atoms/Loading";
 import { useContext } from "react";
 import { AuthContext } from "../components/contexts/AuthContext";
@@ -17,11 +16,16 @@ const Home = () => {
       <LoadingAllPage isOpen={load} setIsOpen={setLoad} />
       <HaderSection />
       <div className="container mx-auto">
+        <div className="my-5 ">
+          <img
+            src="https://onewaymobile.vn/images/config/artboard-113x_1711767160.webp"
+            alt=""
+            className="rounded-lg"
+          />
+        </div>
         <ListProductTop />
         <ListProductHome />
       </div>
-
-      <ListCategoryBottom />
     </>
   );
 };

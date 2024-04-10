@@ -20,6 +20,7 @@ import {
   ListProductsByCategory,
 } from "../../utils/auth";
 import { useRouter } from "next/router";
+import { FaCartArrowDown } from "react-icons/fa6";
 
 const Product = ({ data }) => {
   const router = useRouter();
@@ -53,73 +54,66 @@ const Product = ({ data }) => {
     }
   };
 
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+
   return (
     <li>
-      {data.product_sale && data.product_sale > 0 ? (
-        <span className="absolute bg-[#FF6868] text-xs text-white z-10 rounded-full w-8 h-8 flex justify-center items-center">
-          -{data.product_sale}%
-        </span>
-      ) : null}
-
-      <div className="card">
-        <img src={data.product_image} className="card__image" alt="" />
-        <div className="card__overlay">
-          <div className="card__header">
-            <svg className="card__arc" xmlns="http://www.w3.org/2000/svg">
-              <path />
-            </svg>
-
-            <div className="card__header-text w-full">
-              <h3 className="card__title">
-                <Link href={"/product/" + data.product_id}>
-                  {TruncateText(data.product_name, 70)}
-                </Link>
-              </h3>
+      <div className="">
+        <div className=" h-[430px] w-[275px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl hover:shadow-blue-500 cursor-pointer hover_card">
+          <div
+            className="py-4 card_img"
+            onClick={() => router.push("/product/" + data.product_id)}
+          >
+            <img
+              src={data.product_image}
+              alt="product"
+              className="w-auto h-44"
+            />
+          </div>
+          <div className="h-32">
+            <p
+              className="text-sm text-black dark:text-white overflow-hidden overflow-ellipsis leading-5 line-clamp-2 font-semibold h-10"
+              onClick={() => router.push("/product/" + data.product_id)}
+            >
+              {TruncateText(data.product_name, 50)}
+            </p>
+            <div className="flex items-center flex-wrap gap-2 my-2">
+              <span className="font-semibold card__status">
+                {FormatPrice(
+                  filteredDataColor[0].product_price -
+                    (filteredDataColor[0].product_price * data.product_sale) /
+                      100
+                )}
+              </span>
               {data.product_sale || data.product_sale > 0 ? (
-                <>
-                  <p className="text-center pb-2 text-slate-500">
-                    <del>{FormatPrice(filteredDataColor[0].product_price)}</del>
-                  </p>
-                  <p className="card__status">
-                    {FormatPrice(
-                      filteredDataColor[0].product_price -
-                        (filteredDataColor[0].product_price *
-                          data.product_sale) /
-                          100
-                    )}
-                  </p>
-                </>
-              ) : (
-                <>
-                  <p className="card__status">
-                    {FormatPrice(filteredDataColor[0].product_price)}
-                  </p>
-                </>
-              )}
+                <del className="text-sm text-gray-500">
+                  {FormatPrice(filteredDataColor[0].product_price)}
+                </del>
+              ) : null}
+            </div>
+            <div className="flex items-center justify-center flex-wrap gap-3 mb-3">
+              <span className="px-4 py-2 bg-slate-300 rounded-md text-xs text-gray-600">
+                New 100%
+              </span>
+
+              {data.product_sale && data.product_sale > 0 ? (
+                <span className="px-4 py-2 bg-[#E72929] rounded-md text-xs text-white">
+                  Sale {data.product_sale}%
+                </span>
+              ) : null}
             </div>
           </div>
-          {/* <div className="pl-[2em] flex">
-            <div className="w-[40%]">
-              <p>CPU</p>
-              <p>RAM</p>
-              <p>HARD DRIVER</p>
-              <p>CARD</p>
-              <p>DESKTOP</p>
-            </div>
-            <div className="w-[60%]">
-              <p>{data.product_detail?.product_ram}</p>
-              <p>{data.product_detail?.hard_drive}</p>
-              <p>{data.product_detail?.product_card}</p>
-              <p>{data.product_detail?.desktop}</p>
-            </div>
-          </div> */}
-          <div className="flex justify-center gap-2 p-5">
-            <Button title={"Buy"} type={"button"} onClick={handleBuyNow} />
-            <Button
-              title={"Detail"}
-              type={"button"}
-              onClick={() => router.push("/product/" + data.product_id)}
-            />
+          <div className="flex justify-center">
+            <button
+              className="py-3 px-5 rounded-full border border-solid button_hover"
+              onClick={handleBuyNow}
+            >
+              <span>Add to Cart</span>
+            </button>
           </div>
         </div>
       </div>
@@ -147,7 +141,7 @@ export const ListProductHome = () => {
 
   return (
     <>
-      <div className="flex justify-between items-center py-10">
+      <div className="flex justify-between items-center pt-10 pb-5">
         <p className="text-xl font-bold">SẢN PHẨM HOT</p>
         <Link href="/product">
           <div className="flex items-center gap-3 cursor-pointer">
@@ -361,3 +355,59 @@ export const AllSearchProducts = ({}) => {
     </>
   );
 };
+
+// new product
+// export default function Home() {
+//   const [isHovered, setIsHovered] = useState(false);
+
+//   const handleMouseLeave = () => {
+//     setIsHovered(false);
+//   };
+
+//   return (
+//     <main className="h-[100vh] p-10">
+//       <div className="">
+//         <div className=" h-[420px] w-[230px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl hover:shadow-blue-500 cursor-pointer hover_card">
+//           <div className="px-2 py-1 bg-red-700 rounded-md text-xs text-white w-fit">
+//             213
+//           </div>
+
+//           <div className="py-4 card_img">
+//             <img
+//               src="https://media-cdn-v2.laodong.vn/storage/newsportal/2023/8/26/1233821/Giai-Nhi-1--Nang-Tre.jpg"
+//               alt="product"
+//               className="w-auto h-44"
+//             />
+//           </div>
+//           <p className="text-sm text-black dark:text-white overflow-hidden overflow-ellipsis leading-5 line-clamp-2 font-semibold">
+//             12sad asd324234 23423444444 444444444444 444444444 44444444 4444
+//           </p>
+//           <div className="flex items-center flex-wrap gap-2 mb-2">
+//             <span className="font-semibold text-base text-red-700">
+//               27.390.000₫
+//             </span>
+//             <del className="text-sm text-gray-500">33.990.000₫</del>
+//           </div>
+//           <div className="flex items-center flex-wrap gap-6 mb-3">
+//             <span className="px-4 py-2 bg-gray-200 rounded-md text-xs text-gray-600">
+//               Mới 100%
+//             </span>
+
+//             <div className="product-rate">
+//               <div className="star-rating"></div>
+//             </div>
+//           </div>
+//           <div className="flex justify-center">
+//             <button
+//               className={`snip0040 red ${isHovered ? "hover" : ""}`}
+//               onMouseLeave={handleMouseLeave}
+//             >
+//               <span>Add to Cart</span>
+//               <i className="ion-ios-cart"></i>
+//             </button>
+//           </div>
+//         </div>
+//       </div>
+//     </main>
+//   );
+// }

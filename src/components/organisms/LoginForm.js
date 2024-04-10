@@ -2,11 +2,11 @@ import { useForm } from "react-hook-form";
 import { Facebook, Google } from "../atoms/Icon";
 import { InputForm } from "../atoms/Input";
 import { useState } from "react";
-import axios from "axios";
 
 import { AiOutlineClose } from "react-icons/ai";
-import { LoginCustomer, SignupCustomer } from "../../utils/auth";
+import { LoginCustomer, SignupCustomer, SignupGoogle } from "../../utils/auth";
 import { useRouter } from "next/router";
+import { handleGoogleSignUp } from "../../utils/firebase";
 
 export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
   const router = useRouter();
@@ -48,6 +48,21 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
 
   const toggleLogin = () => {
     setIsShowLogin(!isShowLogin);
+  };
+
+  const handleSignUpGoogle = async () => {
+    try {
+      const user = await handleGoogleSignUp();
+      const payload = {
+        customer_name: user.email,
+        customer_password: user.uid,
+        customer_fullname: user.displayName,
+      };
+      await SignupGoogle(payload);
+      setIsShowLogin(false);
+    } catch (error) {
+      console.error("Error during Google Sign-Up:", error);
+    }
   };
 
   return (
@@ -135,14 +150,15 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
               {create ? "Signup" : "Signin"}
             </button>
           </div>
-          {/* <div className="social">
-            <div className="go">
+          <div className="social">
+            <button
+              type="button"
+              className="p-[1rem] flex justify-center items-center gap-2 bg-white rounded-md w-full border border-solid hover:shadow-xl"
+              onClick={handleSignUpGoogle}
+            >
               <Google className={"h-5"} /> Google
-            </div>
-            <div className="fb">
-              <Facebook className={"h-5"} /> Facebook
-            </div>
-          </div> */}
+            </button>
+          </div>
         </form>
 
         <span onClick={toggleLogin}>

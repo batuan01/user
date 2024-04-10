@@ -111,7 +111,7 @@ img {
   background-color: hsla(230, 75%, 15%, 0.1);
   backdrop-filter: blur(24px);
   -webkit-backdrop-filter: blur(24px); /* For safari */
-  padding: 8rem 1.5rem 0;
+  padding: 5rem 1.5rem 0;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.4s;
@@ -129,17 +129,19 @@ img {
 
 /*=============== HEADER & NAV ===============*/
 .header {
-  position: sticky;
+  position: fixed;
   top: 0;
   left: 0;
   width: 100%;
-  background-color: var(--body-color);
-  box-shadow: 0 2px 16px hsla(230, 75%, 32%, 0.15);
+  /* background-color: var(--body-color); */
+  box-shadow: 0 2px 16px hsla(230, 75%, 32%, 0.25);
   z-index: var(--z-fixed);
+  background: linear-gradient(#b6c0c5, #112d60);
+  color: white;
 }
 
 .nav {
-  height: var(--header-height);
+  height: 88px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -183,6 +185,7 @@ img {
     padding-block: 4.5rem 4rem;
     transition: top 0.4s;
     z-index: 1;
+    color: black;
   }
 }
 
@@ -263,7 +266,7 @@ img {
   padding: 2rem 1.5rem 2.5rem;
   box-shadow: 0 8px 32px hsla(230, 75%, 15%, 0.2);
   border-radius: 1rem;
-  row-gap: 1.25rem;
+  row-gap: 1rem;
   text-align: center;
   transform: translateY(-1rem);
   transition: transform 0.4s;
@@ -373,7 +376,7 @@ img {
 /* For large devices */
 @media screen and (min-width: 1023px) {
   .nav {
-    height: calc(var(--header-height) + 2rem);
+    /* height: calc(var(--header-height) + 2rem); */
     column-gap: 3rem;
   }
   .nav__close,

@@ -38,27 +38,8 @@ export const Header = () => {
     setShowSearch(!showSearch);
   };
 
-  const toggleLogin = () => {
-    setIsShowLogin(!isShowLogin);
-    // router.reload();
-  };
-
   const pathname = router.pathname;
-  const [listitem, setListitem] = useState([]);
   const [listCategory, setListCategory] = useState([]);
-
-  const Signout = () => {
-    Cookies.remove("token");
-    Cookies.remove("id_customer");
-    router.push("/");
-  };
-  const Account = () => {
-    if (storedIdCustomer) {
-      router.push("/account");
-    } else {
-      toggleLogin();
-    }
-  };
 
   const clickCart = () => {
     if (storedIdCustomer) {
@@ -68,30 +49,13 @@ export const Header = () => {
     }
   };
 
-  useEffect(() => {
+  const clickUser = () => {
     if (storedIdCustomer) {
-      setListitem([
-        {
-          icon: <FaRegUser />,
-          text: "Account settings",
-          onclick: Account,
-        },
-        {
-          icon: <FaArrowRightFromBracket />,
-          text: "Sign out",
-          onclick: Signout,
-        },
-      ]);
+      router.push("/account");
     } else {
-      setListitem([
-        {
-          icon: <FaArrowRightToBracket />,
-          text: "Signin",
-          onclick: toggleLogin,
-        },
-      ]);
+      setIsShowLogin(true);
     }
-  }, [storedIdCustomer]);
+  };
 
   const [dataAll, setDataAll] = useState();
   useEffect(() => {
@@ -130,9 +94,8 @@ export const Header = () => {
     <>
       <header className="header" id="header">
         <nav className="nav container">
-          <Link href="/" className="nav__logo">
-            {/* <img src="https://th.bing.com/th/id/OIG1.9kH65o9ek9tWmt2AeFDR?pid=ImgGn" className="h-[88px]" /> */}
-            TGDD
+          <Link href="/" className="nav__logo flex items-center">
+            <img src="./logo.png" className="h-[80px] w-auto cursor-pointer" />
           </Link>
 
           <div
@@ -194,14 +157,9 @@ export const Header = () => {
             </div>
 
             {/* Login button */}
-            <Dropdown
-              content={
-                <span id="login-btn">
-                  <FaRegUser />
-                </span>
-              }
-              listitem={listitem}
-            />
+            <div className="cursor-pointer" onClick={clickUser}>
+              <FaRegUser className=" w-4 h-4" />
+            </div>
 
             {/* Toggle button */}
             <div className="nav__toggle" id="nav-toggle" onClick={toggleMenu}>

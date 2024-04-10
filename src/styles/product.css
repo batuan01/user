@@ -97,7 +97,7 @@
 }
 
 .card__status {
-  font-size: 1em;
+  font-size: 1.3em;
   font-weight: bold;
   color: #d0021c;
   text-align: center;
@@ -130,4 +130,53 @@
   100% {
     transform: translateX(0px);
   }
+}
+
+
+/* new product & slider */
+.hover_card .card_img {
+  transition: transform 300ms ease-in-out;
+}
+
+.hover_card:hover .card_img {
+  transform: translateY(-10px);
+}
+
+.hover_card:not(:hover) .card_img {
+  transform: translateY(0);
+}
+
+.hover_card:hover .button_hover{
+  background: #3b82f6;
+  color: #fff;
+}
+
+.custom-prev-button,
+.custom-next-button {
+  background-color: rgba(152, 200, 248, 0.964);
+  border: none;
+  position: absolute;
+  top: 45%;
+  transform: translateY(-50%);
+  cursor: pointer;
+  padding: 10px;
+  border-radius: 100%;
+}
+
+.custom-prev-button > svg,
+.custom-next-button > svg {
+  font-size: 30px;
+  color: #fff;
+
+  &:hover{
+    color: gray;
+  }
+}
+
+.custom-prev-button {
+  left: 10px; 
+}
+
+.custom-next-button {
+  right: 10px; 
 }
