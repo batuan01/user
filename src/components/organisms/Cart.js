@@ -132,6 +132,73 @@ export const Cart = () => {
     return color ? color.color_name : "";
   };
 
+  //table checkbox//
+  const labelData = ["name", "email", "role", "joinedAt"];
+
+  const [rowData, setRowData] = useState([
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john@example.com",
+      role: "Admin",
+      joinedAt: "2022-05-15",
+      isChecked: false,
+    },
+    {
+      id: 2,
+      name: "John Doe",
+      email: "john@example.com",
+      role: "Admin",
+      joinedAt: "2022-05-15",
+      isChecked: false,
+    },
+  ]);
+
+  const handleCheckboxChange = (index) => {
+    setRowData(
+      rowData.map((item, idx) =>
+        idx === index ? { ...item, isChecked: !item.isChecked } : item
+      )
+    );
+  };
+
+  console.log(isListProduct?.data);
+  
+  const renderItems = [];
+
+  rowData.map((item, index) =>
+    renderItems.push(
+      <tr key={index} className={item.isChecked ? "bg-blue-50" : ""}>
+        <td className="pl-6 w-8">
+          <input
+            id={index}
+            type="checkbox"
+            className="hidden peer"
+            checked={item.isChecked}
+            onChange={() => handleCheckboxChange(index)}
+          />
+          <label
+            htmlFor={index}
+            className="relative flex items-center justify-center p-0.5 peer-checked:before:hidden before:block before:absolute before:w-full before:h-full before:bg-white w-5 h-5 cursor-pointer bg-blue-500 border border-gray-400 rounded overflow-hidden"
+          >
+            <CheckboxIcon />
+          </label>
+        </td>
+        <td className="px-6 py-4 text-sm">123</td>
+        <td className="px-6 py-4 text-sm">231</td>
+        <td className="px-6 py-4 text-sm">123</td>
+        <td className="px-6 py-4 text-sm">123</td>
+      </tr>
+    )
+  );
+
+  const getCheckedIds = () => {
+    const checkedRows = rowData.filter((item) => item.isChecked);
+    const checkedIds = checkedRows.map((item) => item.id);
+    return checkedIds;
+  };
+
+  
   return (
     <>
       {isListProduct?.data?.length > 0 && (
@@ -223,6 +290,13 @@ export const Cart = () => {
         </div>
       )}
 
+      <TableCheckbox
+        labelData={labelData}
+        renderItems={renderItems}
+        setRowData={setRowData}
+        rowData={rowData}
+      />
+
       {isListProduct?.data?.length === 0 && (
         <>
           <div className="flex justify-center flex-col gap-10 items-center w-full h-full py-10">
@@ -234,7 +308,6 @@ export const Cart = () => {
           </div>
         </>
       )}
-      <TableCheckbox/>
     </>
   );
 };
