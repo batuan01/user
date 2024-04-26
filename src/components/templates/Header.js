@@ -95,7 +95,10 @@ export const Header = () => {
       <header className="header" id="header">
         <nav className="nav container">
           <Link href="/" className="nav__logo flex items-center">
-            <img src="./logo.png" className="h-[80px] w-auto cursor-pointer" />
+            <img
+              src="https://firebasestorage.googleapis.com/v0/b/kenta-71006.appspot.com/o/images%2Flogo.png?alt=media&token=d5a22294-5af9-4163-b1bc-7619b29dfbdd"
+              className="h-[80px] w-auto cursor-pointer"
+            />
           </Link>
 
           <div
@@ -170,29 +173,32 @@ export const Header = () => {
       </header>
 
       {pathname !== "/" ? (
-        <nav
-          className="flex py-2 px-[10rem] bg-slate-100"
-          aria-label="Breadcrumb"
-        >
-          <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
-            <li className="inline-flex items-center">
-              <Link href="/">
-                <div className="flex gap-1 items-center text-sm font-medium hover:text-blue-600 dark:hover:text-white cursor-pointer">
-                  <ImHome />
-                  Home
+        <>
+          <div className="h-[88px]"></div>
+          <nav
+            className="flex py-2 px-[10rem] bg-white dark:bg-gray-800 dark:text-white text-sm font-medium shadow-md rtl:justify-start rtl:px-0 rtl:pr-10 rtl:pl-[10rem] fixed w-full z-[5]"
+            aria-label="Breadcrumb"
+          >
+            <ol className="inline-flex items-center space-x-1 md:space-x-2 rtl:space-x-reverse">
+              <li className="inline-flex items-center">
+                <Link href="/">
+                  <div className="flex gap-1 items-center text-sm font-medium hover:text-blue-600 dark:hover:text-white cursor-pointer">
+                    <ImHome />
+                    Home
+                  </div>
+                </Link>
+              </li>
+              <li>
+                <div className="flex items-center">
+                  <FaAngleRight />
+                  <span className="cursor-pointer ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:hover:text-white">
+                    {breadcrumb}
+                  </span>
                 </div>
-              </Link>
-            </li>
-            <li>
-              <div className="flex items-center">
-                <FaAngleRight />
-                <span className="cursor-pointer ms-1 text-sm font-medium  hover:text-blue-600 md:ms-2 dark:hover:text-white">
-                  {breadcrumb}
-                </span>
-              </div>
-            </li>
-          </ol>
-        </nav>
+              </li>
+            </ol>
+          </nav>
+        </>
       ) : null}
 
       <Search showSearch={showSearch} setShowSearch={setShowSearch} />

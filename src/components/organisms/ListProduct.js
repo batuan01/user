@@ -1,6 +1,5 @@
 import Link from "next/link";
-import { FaAngleDoubleRight } from "react-icons/fa";
-import { Button } from "../atoms/Button";
+import { Button, ButtonModal } from "../atoms/Button";
 import { TruncateText } from "../atoms/TruncateText";
 import { useContext, useEffect, useState } from "react";
 import { ProductContext } from "../contexts/ProductContext";
@@ -15,18 +14,27 @@ import { AuthContext } from "../contexts/AuthContext";
 import {
   BuyProduct,
   GetProductLatests,
+  GetProductRandoms,
   GetProductSearch,
   ListProducts,
   ListProductsByCategory,
 } from "../../utils/auth";
 import { useRouter } from "next/router";
-import { FaCartArrowDown } from "react-icons/fa6";
+import {
+  FaAngleDoubleRight,
+  FaSortAmountUp,
+  FaSortAmountDown,
+  FaSortAlphaDown,
+  FaSortAlphaDownAlt,
+} from "react-icons/fa";
+import { GoArrowRight } from "react-icons/go";
 
 const Product = ({ data }) => {
   const router = useRouter();
   const filteredDataColor = data.product_colors.filter(
     (item) => item.quantity > 0
   );
+  const { isShowLogin, setIsShowLogin } = useContext(AuthContext);
 
   const handleBuyNow = async () => {
     try {
@@ -48,6 +56,7 @@ const Product = ({ data }) => {
         Notification.success("Add to cart successfully!");
       } else {
         Notification.error("Please log in to purchase!");
+        setIsShowLogin(true);
       }
     } catch (err) {
       console.log(err);
@@ -71,7 +80,7 @@ const Product = ({ data }) => {
             <img
               src={data.product_image}
               alt="product"
-              className="w-auto h-44"
+              className="w-full h-44"
             />
           </div>
           <div className="h-32">
@@ -122,6 +131,7 @@ const Product = ({ data }) => {
 };
 export const ListProductHome = () => {
   const [dataAll, setDataAll] = useState([]);
+  const [dataAllRandom, setDataAllRandom] = useState([]);
 
   const [loading, setLoading] = useState(true);
 
@@ -135,18 +145,29 @@ export const ListProductHome = () => {
         console.error("Error fetching data:", error);
       }
     };
+    const fetchDataRandom = async () => {
+      try {
+        const result = await GetProductRandoms();
+        setDataAllRandom(result);
+        setLoading(false);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
 
     fetchData();
+
+    fetchDataRandom();
   }, []);
 
   return (
     <>
       <div className="flex justify-between items-center pt-10 pb-5">
-        <p className="text-xl font-bold">SẢN PHẨM HOT</p>
+        <p className="text-xl font-bold">TOP RANKINGS</p>
         <Link href="/product">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <p>Xem tất cả </p>
-            <div className="arrow_right">
+          <div className="flex items-center gap-1 cursor-pointer arrow_right">
+            <p>View more</p>
+            <div className="">
               <FaAngleDoubleRight />
             </div>
           </div>
@@ -164,12 +185,12 @@ export const ListProductHome = () => {
         </ul>
       )}
 
-      <div className="flex justify-between items-center py-10">
-        <p className="text-xl font-bold">SẢN PHẨM NỔI BẬT</p>
+      <div className="flex justify-between items-center pt-10 pb-5">
+        <p className="text-xl font-bold">TOP SELECTION</p>
         <Link href="/product">
-          <div className="flex items-center gap-3 cursor-pointer">
-            <p>Xem tất cả </p>
-            <div className="arrow_right">
+          <div className="flex items-center gap-1 cursor-pointer arrow_right">
+            <p>View more</p>
+            <div className="">
               <FaAngleDoubleRight />
             </div>
           </div>
@@ -181,7 +202,7 @@ export const ListProductHome = () => {
         </div>
       ) : (
         <ul className="cards">
-          {dataAll?.data?.map((item, index) => (
+          {dataAllRandom?.data?.map((item, index) => (
             <Product data={item} key={index} />
           ))}
         </ul>
@@ -192,7 +213,6 @@ export const ListProductHome = () => {
 
 export const AllProducts = ({ category }) => {
   const [dataAll, setDataAll] = useState();
-  const [selectedSort, setSelectedSort] = useState(null);
   const [dataSort, setDataSort] = useState();
   const router = useRouter();
   const params = router.query;
@@ -234,54 +254,92 @@ export const AllProducts = ({ category }) => {
     }
   }, [paginationPage, params.id]);
 
-  const dataSelect = [{ name: "Sort A to Z" }, { name: "Sort Z to A" }];
-
-  let ContentSelect = [];
-  pushData({
-    arrayForm: ContentSelect,
-    data: dataSelect,
-  });
-
+  // Hàm sắp xếp theo thứ tự a-z theo productName
   const sortAscending = (products) => {
     return products
       .slice()
       .sort((a, b) => a.product_name.localeCompare(b.product_name));
   };
 
-  // Hàm sắp xếp theo thứ tự giảm dần theo productName
+  // Hàm sắp xếp theo thứ tự z-a theo productName
   const sortDescending = (products) => {
     return products
       .slice()
       .sort((a, b) => b.product_name.localeCompare(a.product_name));
   };
 
-  const handleSortProduct = (value) => {
-    setSelectedSort(value);
-    if (value.name === "Sort A to Z") {
-      const sortedProducts = sortAscending(dataAll?.data.data);
-      setDataSort(sortedProducts);
-    } else {
-      const sortedProductsDescending = sortDescending(dataAll?.data.data);
-      setDataSort(sortedProductsDescending);
-    }
+  // Sắp xếp tăng dần theo giá sản phẩm
+  const productsSortedAscending = (products) => {
+    return [...products].sort((a, b) => {
+      const priceA = a.product_colors[0].product_price;
+      const priceB = b.product_colors[0].product_price;
+      return priceA - priceB;
+    });
+  };
+
+  // Sắp xếp giảm dần theo giá sản phẩm
+  const productsSortedDescending = (products) => {
+    return [...products].sort((a, b) => {
+      const priceA = a.product_colors[0].product_price;
+      const priceB = b.product_colors[0].product_price;
+      return priceB - priceA;
+    });
   };
 
   return (
     <>
-      <p className="text-center text-2xl font-semibold pt-5">
-        {!category ? "All Product" : dataAll?.category_name}
+      <p className="text-left text-2xl font-semibold pt-5 text-black">
+        Sort By:
       </p>
-      <div className="flex gap-5 justify-end items-center pb-4">
-        <div className=" w-52">
-          <Select
-            selected={selectedSort}
-            content={ContentSelect}
-            onChange={(value) => {
-              setSelectedSort(value);
-              handleSortProduct(value);
-            }}
-          />
-        </div>
+      <div className="flex gap-5 justify-start items-center pb-4">
+        <ButtonModal
+          title={"Price Low"}
+          type={"button"}
+          sizeSm={true}
+          onClick={() => {
+            const sortedProducts= productsSortedAscending(dataAll?.data.data);
+            setDataSort(sortedProducts);
+          }}
+          textBlack
+          className={"border border-slate-400 border-solid bg-white"}
+          icon={<FaSortAmountUp />}
+        />
+        <ButtonModal
+          title={"Price High"}
+          type={"button"}
+          sizeSm={true}
+          onClick={() => {
+            const sortedProducts= productsSortedDescending(dataAll?.data.data);
+            setDataSort(sortedProducts);
+          }}
+          textBlack
+          className={"border border-slate-400 border-solid bg-white"}
+          icon={<FaSortAmountDown />}
+        />
+        <ButtonModal
+          title={"A → Z"}
+          type={"button"}
+          sizeSm={true}
+          onClick={() => {
+            const sortedProducts = sortAscending(dataAll?.data.data);
+            setDataSort(sortedProducts);
+          }}
+          textBlack
+          className={"border border-slate-400 border-solid bg-white"}
+          icon={<FaSortAlphaDown />}
+        />
+        <ButtonModal
+          title={"Z → A"}
+          type={"button"}
+          sizeSm={true}
+          onClick={() => {
+            const sortedProductsDescending = sortDescending(dataAll?.data.data);
+            setDataSort(sortedProductsDescending);
+          }}
+          textBlack
+          className={"border border-slate-400 border-solid bg-white"}
+          icon={<FaSortAlphaDownAlt />}
+        />
       </div>
 
       {dataAll?.data.data?.length > 0 ? (
@@ -355,59 +413,3 @@ export const AllSearchProducts = ({}) => {
     </>
   );
 };
-
-// new product
-// export default function Home() {
-//   const [isHovered, setIsHovered] = useState(false);
-
-//   const handleMouseLeave = () => {
-//     setIsHovered(false);
-//   };
-
-//   return (
-//     <main className="h-[100vh] p-10">
-//       <div className="">
-//         <div className=" h-[420px] w-[230px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl hover:shadow-blue-500 cursor-pointer hover_card">
-//           <div className="px-2 py-1 bg-red-700 rounded-md text-xs text-white w-fit">
-//             213
-//           </div>
-
-//           <div className="py-4 card_img">
-//             <img
-//               src="https://media-cdn-v2.laodong.vn/storage/newsportal/2023/8/26/1233821/Giai-Nhi-1--Nang-Tre.jpg"
-//               alt="product"
-//               className="w-auto h-44"
-//             />
-//           </div>
-//           <p className="text-sm text-black dark:text-white overflow-hidden overflow-ellipsis leading-5 line-clamp-2 font-semibold">
-//             12sad asd324234 23423444444 444444444444 444444444 44444444 4444
-//           </p>
-//           <div className="flex items-center flex-wrap gap-2 mb-2">
-//             <span className="font-semibold text-base text-red-700">
-//               27.390.000₫
-//             </span>
-//             <del className="text-sm text-gray-500">33.990.000₫</del>
-//           </div>
-//           <div className="flex items-center flex-wrap gap-6 mb-3">
-//             <span className="px-4 py-2 bg-gray-200 rounded-md text-xs text-gray-600">
-//               Mới 100%
-//             </span>
-
-//             <div className="product-rate">
-//               <div className="star-rating"></div>
-//             </div>
-//           </div>
-//           <div className="flex justify-center">
-//             <button
-//               className={`snip0040 red ${isHovered ? "hover" : ""}`}
-//               onMouseLeave={handleMouseLeave}
-//             >
-//               <span>Add to Cart</span>
-//               <i className="ion-ios-cart"></i>
-//             </button>
-//           </div>
-//         </div>
-//       </div>
-//     </main>
-//   );
-// }

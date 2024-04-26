@@ -21,6 +21,7 @@ import {
 import { useRouter } from "next/router";
 import { RadioGroupForm } from "../atoms/RadioGroup";
 import { TruncateText } from "../atoms/TruncateText";
+import { CgSmartphoneRam } from "react-icons/cg";
 
 export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -30,7 +31,7 @@ export const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState();
 
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
-  
+
   const router = useRouter();
   const params = router.query;
   const {
@@ -177,9 +178,10 @@ export const ProductDetail = () => {
     return null;
   };
 
-  useEffect(()=>{
-    setQuantity(1)
-  },[selectedColor])
+  useEffect(() => {
+    setQuantity(1);
+  }, [selectedColor]);
+  console.log(detailProduct);
 
   return (
     <>
@@ -259,10 +261,13 @@ export const ProductDetail = () => {
                               </span>
                               <div>
                                 <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  No. of cores
+                                  Screen
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  12 Cores
+                                  {
+                                    detailProduct?.data.product_detail
+                                      .desktop
+                                  }
                                 </h2>
                               </div>
                             </div>
@@ -270,14 +275,17 @@ export const ProductDetail = () => {
                           <div className="w-full mb-4 md:w-2/5">
                             <div className="flex ">
                               <span className="mr-3 text-gray-500 dark:text-gray-400 text-3xl">
-                                <FaCamera />
+                                <CgSmartphoneRam />
                               </span>
                               <div>
                                 <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  Graphic
+                                  Ram
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  Intel UHD
+                                  {
+                                    detailProduct?.data.product_detail
+                                      .product_ram
+                                  }
                                 </h2>
                               </div>
                             </div>
@@ -289,10 +297,13 @@ export const ProductDetail = () => {
                               </span>
                               <div>
                                 <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  Processor
+                                  Hard Drive
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  INTEL 80486
+                                  {
+                                    detailProduct?.data.product_detail
+                                      .hard_drive
+                                  }
                                 </h2>
                               </div>
                             </div>
@@ -304,10 +315,13 @@ export const ProductDetail = () => {
                               </span>
                               <div>
                                 <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  Frequency
+                                  Pin
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  3.5 GHz
+                                  {
+                                    detailProduct?.data.product_detail
+                                      .product_card
+                                  }h
                                 </h2>
                               </div>
                             </div>
@@ -369,7 +383,7 @@ export const ProductDetail = () => {
             className="relative flex flex-col text-gray-700 bg-white shadow-md bg-clip-border rounded-xl w-full cursor-pointer"
             onClick={() => router.push("/product/" + item.product_id)}
           >
-            <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white shadow-lg bg-clip-border rounded-xl min-h-[300px]">
+            <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white shadow-lg bg-clip-border rounded-xl min-h-[250px]">
               <img
                 src={item.product_image}
                 alt="profile-picture"
@@ -377,10 +391,12 @@ export const ProductDetail = () => {
               />
             </div>
             <div className="p-6 text-center">
-              <h4 className="block mb-2 font-sans text-2xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
+              <h4 className="block mb-2 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
                 {TruncateText(item.product_name, 50)}
               </h4>
-              <p className="">{FormatPrice(item.product_colors[0].product_price)}</p>
+              <p className="">
+                {FormatPrice(item.product_colors[0].product_price)}
+              </p>
             </div>
           </div>
         ))}

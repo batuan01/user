@@ -19,7 +19,7 @@ export const Dropdown = ({ content, listitem }) => {
         leaveFrom="transform opacity-100 scale-100"
         leaveTo="transform opacity-0 scale-95"
       >
-        <Menu.Items className="absolute right-0 z-10 mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none translate-x-10 translate-y-6">
+        <Menu.Items className="absolute right-0 z-[20] mt-2 origin-top-right rounded-md bg-white shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none translate-x-10 translate-y-6">
           <div
             className="absolute h-0 w-0 border-solid right-11"
             style={{
@@ -33,7 +33,7 @@ export const Dropdown = ({ content, listitem }) => {
               <Menu.Item key={index}>
                 <p
                   className={
-                    "px-5 py-3 text-sm cursor-pointer hover:bg-gray_light hover:rounded-md flex gap-2 items-center"
+                    "text-black px-5 py-3 text-sm cursor-pointer hover:bg-gray_light hover:rounded-md flex gap-2 items-center"
                   }
                   onClick={item.onclick}
                 >

@@ -26,7 +26,7 @@ export const HaderSection = () => {
     {
       backgroundImage:
         "https://zda.vn/wp-content/uploads/2021/04/dien-thoai-samsung-2-2048x1152.jpg",
-      title: "Lossless Youths",
+      title: "5",
       description:
         "Lorem ipsum, dolor sit amet consectetur adipisicing elit. Tempore fuga voluptatum, iure corporis inventore praesentium nisi. Id laboriosam ipsam enim.",
     },

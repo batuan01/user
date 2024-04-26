@@ -15,12 +15,16 @@ import {
 } from "../../utils/auth";
 import { AuthContext } from "../contexts/AuthContext";
 import { useRouter } from "next/router";
+import { CheckboxIcon } from "../atoms/Icon";
+import { TableCheckbox } from "../molecules/TableCheckbox";
 
 export const Cart = () => {
   const [isListProduct, setIsListProduct] = useState([]);
   const [productUpdate, setProductUpdate] = useState([]);
   const [quantity, setQuantity] = useState();
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
+
+  const [reload, setReload] = useState(true);
 
   const router = useRouter();
   const storedIdCustomer = Cookies.get("id_customer");
@@ -51,7 +55,7 @@ export const Cart = () => {
     if (IdCustomer) {
       fetchCart();
     }
-  }, [IdCustomer]);
+  }, [IdCustomer, reload]);
 
   //total product
   const arraySum = isListProduct?.data
@@ -98,7 +102,9 @@ export const Cart = () => {
       IDCustomer: IdCustomer,
       IDProduct: product_id,
     };
+    setLoad(true);
     await DeleteProductCart(payload);
+    setReload(!reload);
     router.push("/cart/?delete=" + product_id);
     Notification.success("Delete successfully!");
   };
@@ -147,42 +153,49 @@ export const Cart = () => {
 
                 return (
                   <div
-                    className="flex items-center justify-between gap-5 my-5"
+                    className="grid grid-cols-12 gap-2 py-5 items-center hover:bg-slate-100 cursor-pointer"
                     key={index}
                   >
-                    <img
-                      className="w-16 h-16"
-                      src={item.product_detail.product_image}
-                    />
-                    <div className="w-[60%]">
+                    <div className="col-span-1">
+                      <img
+                        className="w-16 h-16"
+                        src={item.product_detail.product_image}
+                      />
+                    </div>
+                    <div className="col-span-6">
                       <p className="text-black font-semibold">
                         {TruncateText(item.product_detail.product_name, 70)}
                       </p>
-                      <p className="text-[#8e8e8e] font-bold text-xs pb-1">
+                      <p className="text-[#8e8e8e] font-bold text-xs py-1">
                         {getColorName(item.color_id)}
                       </p>
                     </div>
-                    <InputQuantity
-                      quantity={item.product_quantity}
-                      setQuantity={(newQuantity) =>
-                        handleQuantityChange(index, newQuantity)
-                      }
-                      maxQuantity={mapProductColor?.quantity}
-                    />
-
-                    <p>
-                      {FormatPrice(
-                        mapProductColor.product_price -
-                          (mapProductColor.product_price *
-                            item.product_detail.product_sale) /
-                            100
-                      )}
-                    </p>
-                    <div
-                      className="cursor-pointer p-3 rounded-full hover:bg-orange hover:text-white"
-                      onClick={() => deleteProduct(item.product_id)}
-                    >
-                      <CgClose />
+                    <div className="col-span-2">
+                      <InputQuantity
+                        quantity={item.product_quantity}
+                        setQuantity={(newQuantity) =>
+                          handleQuantityChange(index, newQuantity)
+                        }
+                        maxQuantity={mapProductColor?.quantity}
+                      />
+                    </div>
+                    <div className="col-span-2">
+                      <p className=" text-center">
+                        {FormatPrice(
+                          mapProductColor.product_price -
+                            (mapProductColor.product_price *
+                              item.product_detail.product_sale) /
+                              100
+                        )}
+                      </p>
+                    </div>
+                    <div className="col-span-1 flex justify-end">
+                      <div
+                        className="cursor-pointer p-3 rounded-full hover:bg-orange hover:text-white max-w-[40px]"
+                        onClick={() => deleteProduct(item.product_id)}
+                      >
+                        <CgClose />
+                      </div>
                     </div>
                   </div>
                 );
@@ -221,6 +234,7 @@ export const Cart = () => {
           </div>
         </>
       )}
+      <TableCheckbox/>
     </>
   );
 };

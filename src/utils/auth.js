@@ -408,3 +408,17 @@ export const PostVNPay = async (payload) => {
     console.error("Lỗi khi gọi API:", error);
   }
 };
+
+/* <SLIDER> */
+export const GetSliders = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getSliders(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};

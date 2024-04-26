@@ -469,7 +469,11 @@ export const CheckoutForm = () => {
       payment_id: Number(selectedOption),
       shipping_info: {
         shipping_name: value.shipping_name,
-        shipping_address: `${value.specific_address ? `${value.specific_address}, ` : ''} ${value.ward?.name}, ${value.district?.name}, ${value.province?.name}`,
+        shipping_address: `${
+          value.specific_address ? `${value.specific_address}, ` : ""
+        } ${value.ward?.name}, ${value.district?.name}, ${
+          value.province?.name
+        }`,
         shipping_phone: value.shipping_phone,
         shipping_notes: value.notes,
       },
@@ -482,13 +486,20 @@ export const CheckoutForm = () => {
         product_sales_quantity: item.product_quantity,
       })),
     };
-    const result = await OrderProduct(dataSend);
-    const payload = {
-      customer_id: dataSend.customer_id,
-    };
-    await DeleteAllProductCart(payload);
-    Notification.success("Order successfully!");
-    return result.data.order_id
+    if (
+      !dataSend.shipping_info.shipping_name ||
+      !dataSend.shipping_info.shipping_phone
+    ) {
+      Notification.error("Please enter complete information!");
+    } else {
+      const result = await OrderProduct(dataSend);
+      const payload = {
+        customer_id: dataSend.customer_id,
+      };
+      await DeleteAllProductCart(payload);
+      Notification.success("Order successfully!");
+      return result.data.order_id;
+    }
   };
 
   const handleVnpayPayment = async ({ orderID }) => {
@@ -507,11 +518,15 @@ export const CheckoutForm = () => {
 
   const CompleteOrder = async () => {
     if (selectedOption === "1") {
-      await PushOrder();
-      router.push("/thanks");
+      const orderID = await PushOrder();
+      if (orderID) {
+        router.push("/thanks");
+      }
     } else {
       const orderID = await PushOrder();
-      handleVnpayPayment({ orderID });
+      if (orderID) {
+        handleVnpayPayment({ orderID });
+      }
     }
   };
 

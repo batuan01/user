@@ -12,7 +12,7 @@ export const Layout = ({ children }) => {
       {!whiteList.includes(pathname) ? (
         <>
           <Header />
-          <div className="h-[88px]"></div>
+          <div className="h-[40px]"></div>
           {children}
           <Footer />
         </>
