@@ -260,14 +260,11 @@ export const ProductDetail = () => {
                                 <FaMobileScreenButton />
                               </span>
                               <div>
-                                <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                <p className=" text-sm font-medium text-gray-500 dark:text-gray-400">
                                   Screen
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  {
-                                    detailProduct?.data.product_detail
-                                      .desktop
-                                  }
+                                  {detailProduct?.data.product_detail.desktop}
                                 </h2>
                               </div>
                             </div>
@@ -278,7 +275,7 @@ export const ProductDetail = () => {
                                 <CgSmartphoneRam />
                               </span>
                               <div>
-                                <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                <p className=" text-sm font-medium text-gray-500 dark:text-gray-400">
                                   Ram
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
@@ -296,7 +293,7 @@ export const ProductDetail = () => {
                                 <ProcessorIcon />
                               </span>
                               <div>
-                                <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                <p className=" text-sm font-medium text-gray-500 dark:text-gray-400">
                                   Hard Drive
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
@@ -314,14 +311,14 @@ export const ProductDetail = () => {
                                 <FaRegClock />
                               </span>
                               <div>
-                                <p className="mb-2 text-sm font-medium text-gray-500 dark:text-gray-400">
+                                <p className=" text-sm font-medium text-gray-500 dark:text-gray-400">
                                   Pin
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  {
-                                    detailProduct?.data.product_detail
-                                      .product_card
-                                  }h
+                                  {detailProduct?.data.product_detail
+                                    .product_card
+                                    ? `${detailProduct?.data.product_detail.product_card} h`
+                                    : ""}
                                 </h2>
                               </div>
                             </div>

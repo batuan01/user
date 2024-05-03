@@ -162,8 +162,7 @@ export const Cart = () => {
     );
   };
 
-  console.log(isListProduct?.data);
-  
+
   const renderItems = [];
 
   rowData.map((item, index) =>
@@ -198,7 +197,7 @@ export const Cart = () => {
     return checkedIds;
   };
 
-  
+
   return (
     <>
       {isListProduct?.data?.length > 0 && (
@@ -290,12 +289,12 @@ export const Cart = () => {
         </div>
       )}
 
-      <TableCheckbox
+      {/* <TableCheckbox
         labelData={labelData}
         renderItems={renderItems}
         setRowData={setRowData}
         rowData={rowData}
-      />
+      /> */}
 
       {isListProduct?.data?.length === 0 && (
         <>
