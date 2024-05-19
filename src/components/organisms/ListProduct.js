@@ -16,6 +16,7 @@ import {
   GetProductLatests,
   GetProductRandoms,
   GetProductSearch,
+  ListCategories,
   ListProducts,
   ListProductsByCategory,
 } from "../../utils/auth";
@@ -38,9 +39,8 @@ const Product = ({ data }) => {
 
   const handleBuyNow = async () => {
     try {
-      const storedIdCustomer = Cookies.get("id_customer");
-      if (storedIdCustomer) {
-        const IdCustomer = atob(storedIdCustomer);
+      const IdCustomer = Cookies.get("id_customer");
+      if (IdCustomer) {
         const buyData = {
           customer_id: IdCustomer,
           products: [
@@ -71,8 +71,8 @@ const Product = ({ data }) => {
 
   return (
     <li>
-      <div className="">
-        <div className=" h-[430px] w-[275px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl hover:shadow-blue-500 cursor-pointer hover_card">
+      <div>
+        <div className=" h-[445px] w-[275px] relative p-4 bg-white shadow-md rounded-xl transition duration-300 ease-in-out hover:drop-shadow-2xl hover:shadow-blue-500 cursor-pointer hover_card">
           <div
             className="py-4 card_img"
             onClick={() => router.push("/product/" + data.product_id)}
@@ -80,10 +80,10 @@ const Product = ({ data }) => {
             <img
               src={data.product_image}
               alt="product"
-              className="w-full h-44"
+              className="w-full h-44 object-contain"
             />
           </div>
-          <div className="h-32">
+          <div className="h-auto">
             <p
               className="text-sm text-black dark:text-white overflow-hidden overflow-ellipsis leading-5 line-clamp-2 font-semibold h-10"
               onClick={() => router.push("/product/" + data.product_id)}
@@ -220,6 +220,8 @@ export const AllProducts = ({ category }) => {
 
   const [paginationPage, setPaginationPage] = useState(params.page ?? 1);
 
+  const [dataAllCategory, setDataAllCategory] = useState();
+
   useEffect(() => {
     const fetchDataAllProduct = async () => {
       try {
@@ -252,6 +254,17 @@ export const AllProducts = ({ category }) => {
     if (category && params.id) {
       fetchDataByCategory();
     }
+
+    const fetchDataCategory = async () => {
+      try {
+        const result = await ListCategories();
+        setDataAllCategory(result);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchDataCategory();
   }, [paginationPage, params.id]);
 
   // Hàm sắp xếp theo thứ tự a-z theo productName
@@ -288,6 +301,24 @@ export const AllProducts = ({ category }) => {
 
   return (
     <>
+      <div className="flex items-center gap-3 my-5">
+        {dataAllCategory?.map((item, index) => (
+          <ButtonModal
+            title={item.category_name}
+            type={"button"}
+            sizeSm={true}
+            onClick={() => {
+              router.push(`/category/${item.category_id}`);
+            }}
+            textBlack
+            className={`border border-slate-400 border-solid bg-white rounded-full ${
+              item.category_id == params.id ? "bg-slate-400 text-white" : ""
+            }`}
+            key={index}
+          />
+        ))}
+      </div>
+
       <p className="text-left text-2xl font-semibold pt-5 text-black">
         Sort By:
       </p>
@@ -297,7 +328,7 @@ export const AllProducts = ({ category }) => {
           type={"button"}
           sizeSm={true}
           onClick={() => {
-            const sortedProducts= productsSortedAscending(dataAll?.data.data);
+            const sortedProducts = productsSortedAscending(dataAll?.data.data);
             setDataSort(sortedProducts);
           }}
           textBlack
@@ -309,7 +340,7 @@ export const AllProducts = ({ category }) => {
           type={"button"}
           sizeSm={true}
           onClick={() => {
-            const sortedProducts= productsSortedDescending(dataAll?.data.data);
+            const sortedProducts = productsSortedDescending(dataAll?.data.data);
             setDataSort(sortedProducts);
           }}
           textBlack
@@ -388,9 +419,9 @@ export const AllSearchProducts = ({}) => {
   return (
     <>
       <div className="py-10">
-        <p className="text-center font-semibold text-3xl">Tìm kiếm</p>
+        <p className="text-center font-semibold text-3xl">Search</p>
         <p className="text-center py-2">
-          Có {dataAll?.data.length} sản phẩm phù hợp với từ khóa
+          There are {dataAll?.data.length} products matching the keyword
         </p>
         <p className="flex justify-center">
           <span className="w-10 h-[2px] bg-gray"></span>

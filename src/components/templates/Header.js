@@ -39,7 +39,6 @@ export const Header = () => {
   };
 
   const pathname = router.pathname;
-  const [listCategory, setListCategory] = useState([]);
 
   const clickCart = () => {
     if (storedIdCustomer) {
@@ -56,39 +55,6 @@ export const Header = () => {
       setIsShowLogin(true);
     }
   };
-
-  const [dataAll, setDataAll] = useState();
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const result = await ListCategories();
-        setDataAll(result);
-      } catch (error) {
-        console.error("Error fetching data:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
-
-  useEffect(() => {
-    if (dataAll) {
-      const additionalElement = {
-        text: "All products",
-        onclick: () => router.push(`/product`),
-      };
-
-      const dataMap = dataAll?.map((item) => ({
-        text: item.category_name,
-        onclick: () => router.push(`/category/${item.category_id}`),
-      }));
-
-      // Adding the additional element to the beginning of the array
-      const updatedListCategory = [additionalElement, ...dataMap];
-
-      setListCategory(updatedListCategory);
-    }
-  }, [dataAll]);
 
   return (
     <>
@@ -113,14 +79,9 @@ export const Header = () => {
               </li>
 
               <li className="nav__item">
-                <Dropdown
-                  content={
-                    <span className="flex gap-1 items-center">
-                      Categories <FaAngleDown />
-                    </span>
-                  }
-                  listitem={listCategory}
-                />
+                <Link href="/product" className="nav__link">
+                  Products
+                </Link>
               </li>
 
               <li className="nav__item">
@@ -128,12 +89,6 @@ export const Header = () => {
                   News
                 </Link>
               </li>
-
-              {/* <li className="nav__item">
-                <a href="#" className="nav__link">
-                  Shopping Guide
-                </a>
-              </li> */}
 
               <li className="nav__item">
                 <Link href="/contact" className="nav__link">

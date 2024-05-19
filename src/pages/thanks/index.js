@@ -13,7 +13,7 @@ const ThankForPurchase = () => {
 
   useEffect(() => {
     const payload = {
-      order_id: Number(query.orderID),
+      order_id: Number(query?.orderID),
       order_status: 2,
     };
     if (query.vnp_ResponseCode === "00") {

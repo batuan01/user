@@ -8,7 +8,7 @@ export const LoginCustomer = async (payload) => {
     const { data, status } = await SERVICES.loginCustomer(payload);
     if (status === 200) {
       Cookies.set("token", data.data.access_token);
-      const id_customer = btoa(data.data.customer.customer_id); // Sử dụng hàm btoa() để mã hóa Base64
+      const id_customer = data.data.customer.customer_id; 
       Cookies.set("id_customer", id_customer);
       Notification.success("Success !");
     } else {
@@ -24,7 +24,7 @@ export const SignupCustomer = async (payload) => {
     const { data, status } = await SERVICES.signupCustomer(payload);
     if (status === 201) {
       Cookies.set("token", data.data.access_token);
-      const id_customer = btoa(data.data.customer.customer_id); // Sử dụng hàm btoa() để mã hóa Base64
+      const id_customer = data.data.customer.customer_id; 
       Cookies.set("id_customer", id_customer);
       Notification.success("Success !");
     } else {
@@ -39,9 +39,7 @@ export const SignupGoogle = async (payload) => {
   try {
     const { data, status } = await SERVICES.signupGoogle(payload);
     if (status === 200) {
-      console.log(data);
-      // Cookies.set("token", data.data.access_token);
-      const id_customer = btoa(data.data.customer_id); // Sử dụng hàm btoa() để mã hóa Base64
+      const id_customer = data.data.customer_id; 
       Cookies.set("id_customer", id_customer);
       Notification.success("Success !");
     } else {

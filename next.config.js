@@ -11,13 +11,12 @@ const securityHeaders = [
 ];
 
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
   swcMinify: false,
   env: {
     GO_HOST: process.env.GO_HOST,
     SIGNUP_POINT_ID: process.env.SIGNUP_POINT_ID,
   },
-  reactStrictMode: false,
   async headers() {
     return [
       {

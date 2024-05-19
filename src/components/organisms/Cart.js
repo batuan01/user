@@ -27,11 +27,8 @@ export const Cart = () => {
   const [reload, setReload] = useState(true);
 
   const router = useRouter();
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
+  const IdCustomer = Cookies.get("id_customer");
+
   const {
     register,
     handleSubmit,

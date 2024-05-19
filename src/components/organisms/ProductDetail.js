@@ -43,11 +43,7 @@ export const ProductDetail = () => {
     formState: { errors },
   } = useForm();
 
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
+  const IdCustomer = Cookies.get("id_customer");
 
   const images = [
     {
@@ -120,9 +116,8 @@ export const ProductDetail = () => {
   }, [detailProduct]);
 
   const onSubmit = async () => {
-    const storedIdCustomer = Cookies.get("id_customer");
-    if (storedIdCustomer) {
-      const IdCustomer = atob(storedIdCustomer);
+    const IdCustomer = Cookies.get("id_customer");
+    if (IdCustomer) {
       const buyData = {
         customer_id: IdCustomer,
         products: [
@@ -141,9 +136,8 @@ export const ProductDetail = () => {
     }
   };
   const BuyNow = async () => {
-    const storedIdCustomer = Cookies.get("id_customer");
-    if (storedIdCustomer) {
-      const IdCustomer = atob(storedIdCustomer);
+    const IdCustomer = Cookies.get("id_customer");
+    if (IdCustomer) {
       const buyData = {
         customer_id: IdCustomer,
         products: [
@@ -181,8 +175,7 @@ export const ProductDetail = () => {
   useEffect(() => {
     setQuantity(1);
   }, [selectedColor]);
-  console.log(detailProduct);
-
+console.log(detailProduct);
   return (
     <>
       <section className="pt-10 font-poppins dark:bg-gray-800">
@@ -264,7 +257,7 @@ export const ProductDetail = () => {
                                   Screen
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
-                                  {detailProduct?.data.product_detail.desktop}
+                                  {detailProduct?.data.product_detail?.desktop}
                                 </h2>
                               </div>
                             </div>
@@ -281,7 +274,7 @@ export const ProductDetail = () => {
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
                                   {
                                     detailProduct?.data.product_detail
-                                      .product_ram
+                                      ?.product_ram
                                   }
                                 </h2>
                               </div>
@@ -299,7 +292,7 @@ export const ProductDetail = () => {
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
                                   {
                                     detailProduct?.data.product_detail
-                                      .hard_drive
+                                      ?.hard_drive
                                   }
                                 </h2>
                               </div>
@@ -316,8 +309,8 @@ export const ProductDetail = () => {
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
                                   {detailProduct?.data.product_detail
-                                    .product_card
-                                    ? `${detailProduct?.data.product_detail.product_card} h`
+                                    ?.product_card
+                                    ? `${detailProduct?.data.product_detail?.product_card} h`
                                     : ""}
                                 </h2>
                               </div>
@@ -368,6 +361,12 @@ export const ProductDetail = () => {
                   </button>
                 </div>
               </div>
+              <div
+                className="py-10 pl-[70px]"
+                dangerouslySetInnerHTML={{
+                  __html: detailProduct?.data.product_content,
+                }}
+              ></div>
             </form>
           </div>
         </div>

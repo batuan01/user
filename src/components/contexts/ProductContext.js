@@ -7,11 +7,7 @@ const ProductContext = createContext(undefined);
 const ProductProvider = ({ children }) => {
   const [isListProduct, setIsListProduct] = useState([]);
 
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
+  const IdCustomer = Cookies.get("id_customer");
 
   // useEffect(() => {
   //   const fetchCart = async () => {
@@ -23,7 +19,7 @@ const ProductProvider = ({ children }) => {
   //   }
   // }, [IdCustomer, searchParams]);
   // console.log(searchParams);
-  
+
   const contextValue = {
     isListProduct,
     setIsListProduct,

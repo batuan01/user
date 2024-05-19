@@ -20,6 +20,7 @@ import Notification from "../atoms/Notification";
 import { TruncateText } from "../atoms/TruncateText";
 import Link from "next/link";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
+import { ReasonForCancellation } from "../../constants/common";
 
 export const Account = () => {
   const { setLoad, setBreadcrumb } = useContext(AuthContext);
@@ -29,6 +30,7 @@ export const Account = () => {
   const [dataOrder, setDataOrder] = useState();
   const [isReload, setIsReload] = useState(false);
   const [isReloadOrder, setIsReloadOrder] = useState(false);
+  const [selectedReason, setSelectedReason] = useState();
 
   const router = useRouter();
   const params = router.query;
@@ -46,11 +48,7 @@ export const Account = () => {
     formState: { errors },
   } = useForm();
 
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
+  const IdCustomer = Cookies.get("id_customer");
   useEffect(() => {
     const fetchAccount = async () => {
       const dataUser = await GetCustomerDetail({ customer_id: IdCustomer });
@@ -97,6 +95,12 @@ export const Account = () => {
       const dataOrder = await GetOrderProduct({ customer_id: IdCustomer });
       setLoad(false);
       setDataOrder(dataOrder);
+
+      const dataReason = dataOrder?.data.map((data) => ({
+        order_id: data.order_id,
+        order_reason: data.order_reason,
+      }));
+      setSelectedReason(dataReason);
     };
 
     if (IdCustomer) {
@@ -109,11 +113,27 @@ export const Account = () => {
     return color ? color.color_name : "";
   };
 
+  const fineReason = (id) => {
+    return selectedReason.find((reason) => reason.order_id === id);
+  };
+
+  const updateOrderReason = (orderId, newReason) => {
+    setSelectedReason((prevOrders) =>
+      prevOrders.map((order) =>
+        order.order_id === orderId
+          ? { ...order, order_reason: newReason }
+          : order
+      )
+    );
+  };
+
   const handleReturnorRefund = async (id) => {
+    const reason = fineReason(id)?.order_reason;
     setLoad(true);
     const payload = {
       order_id: Number(id),
       order_status: 5,
+      order_reason: reason,
     };
     await PutOrderProduct(payload);
     Notification.success("Cancel order successfully!");
@@ -174,15 +194,32 @@ export const Account = () => {
             ))}
 
             <div className="flex justify-between items-center gap-4 p-3 bg-[#ffe6c7] mb-3">
-              <div>
-                {item.order_status === 1 || item.order_status === 2 ? (
-                  <button
-                    className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
-                    onClick={() => handleReturnorRefund(item.order_id)}
+              <div className="flex gap-10 items-center">
+                <div className="min-w-[350px]">
+                  <select
+                    id="countries"
+                    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500"
+                    onChange={(e) => {
+                      updateOrderReason(item.order_id, Number(e.target.value));
+                    }}
+                    defaultValue={fineReason(item.order_id)?.order_reason}
                   >
-                    Request a Return/Refund
-                  </button>
-                ) : null}
+                    <option selected>Choose a reason</option>
+                    {ReasonForCancellation.map((item, index) => (
+                      <option value={index + 1}>{item.name}</option>
+                    ))}
+                  </select>
+                </div>
+                <div className="w-[-webkit-fill-available]">
+                  {item.order_status === 1 || item.order_status === 2 ? (
+                    <button
+                      className="bg-transparent hover:bg-blue-500 text-blue-700 font-semibold hover:text-white py-2 px-4 border border-blue-500 border-solid hover:border-transparent rounded "
+                      onClick={() => handleReturnorRefund(item.order_id)}
+                    >
+                      Request a Return/Refund
+                    </button>
+                  ) : null}
+                </div>
               </div>
               <p>
                 <span>Total payment:</span>{" "}

@@ -112,7 +112,7 @@ const SERVICES = {
   getCouponBycode: (payload) => mainRequest(`/couponByCode/`, payload, "get"),
 
   /* <SLIDER> */
-  getSliders: (payload) => mainRequest(`/sliders/`, payload, "get"),
+  getSliders: (payload) => mainRequest(`/allSliders/`, payload, "get"),
 };
 
 export default SERVICES;

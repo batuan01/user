@@ -80,11 +80,7 @@ export const CheckoutForm = () => {
 
   const router = useRouter();
   const value = getValues();
-  const storedIdCustomer = Cookies.get("id_customer");
-  let IdCustomer;
-  if (storedIdCustomer) {
-    IdCustomer = atob(storedIdCustomer);
-  }
+  const IdCustomer = Cookies.get("id_customer");
 
   useEffect(() => {
     setBreadcrumb("Checkout");
