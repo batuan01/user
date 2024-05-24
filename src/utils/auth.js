@@ -394,6 +394,20 @@ export const GetCouponBycode = async (payload) => {
   }
 };
 
+export const GetRandomCoupon = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getRandomCoupon(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};
+
+/* <VNPAY> */
 export const PostVNPay = async (payload) => {
   try {
     const { data, status } = await SERVICES.postVNPay(payload);

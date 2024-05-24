@@ -2,8 +2,12 @@ import { ListProductTop } from "../components/organisms/ProductTop";
 import { HaderSection } from "../components/organisms/HaderSection";
 import { ListProductHome } from "../components/organisms/ListProduct";
 import { LoadingAllPage } from "../components/atoms/Loading";
-import { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../components/contexts/AuthContext";
+import { Modal } from "../components/molecules/Modal";
+import { GetRandomCoupon } from "../utils/auth";
+import styled, { keyframes } from "styled-components";
+import { CgClose } from "react-icons/cg";
 
 export const metadata = {
   title: "Technology",
@@ -11,6 +15,60 @@ export const metadata = {
 };
 const Home = () => {
   const { load, setLoad } = useContext(AuthContext);
+  const [isOpen, setIsOpen] = useState(true);
+  const [dataCoupon, setDataCoupon] = useState();
+
+  useEffect(() => {
+    const fetchCoupons = async () => {
+      const result = await GetRandomCoupon();
+      setDataCoupon(result);
+    };
+    fetchCoupons();
+  }, []);
+
+  const textColorChange = keyframes`
+  0% {
+    color: red;
+  }
+  25% {
+    color: blue;
+  }
+  50% {
+    color: green;
+  }
+  75% {
+    color: yellow;
+  }
+  100% {
+    color: red;
+  }
+`;
+
+  const StyledDiv = styled.div`
+    font-size: 24px;
+    text-align: center;
+    animation: ${textColorChange} 4s infinite;
+    font-weight: bold;
+  `;
+
+  const ContentModal = (
+    <div className="w-[500px] h-auto">
+      <div className="absolute w-[500px] flex justify-end">
+        <div
+          className="cursor-pointer p-3 rounded-full hover:bg-orange hover:text-white max-w-[40px] bg-slate-100"
+          onClick={() => setIsOpen(false)}
+        >
+          <CgClose />
+        </div>
+      </div>
+      <img src="/sale.png" className="w-full h-auto" />
+      <p className="text-center pt-5">Enter code to get discount</p>
+      <div className="pt-2">
+        <StyledDiv>{dataCoupon?.coupon_code}</StyledDiv>
+      </div>
+    </div>
+  );
+
   return (
     <>
       <LoadingAllPage isOpen={load} setIsOpen={setLoad} />
@@ -26,6 +84,8 @@ const Home = () => {
         <ListProductTop />
         <ListProductHome />
       </div>
+
+      <Modal isOpen={isOpen} setIsOpen={setIsOpen} content={ContentModal} />
     </>
   );
 };

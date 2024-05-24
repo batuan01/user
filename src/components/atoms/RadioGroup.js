@@ -4,6 +4,7 @@ export const RadioGroupForm = ({
   options,
   selectedOption,
   setSelectedOption,
+  name
 }) => {
   const handleOptionChange = (event) => {
     setSelectedOption(event.target.value);
@@ -18,7 +19,7 @@ export const RadioGroupForm = ({
               id={option.label.toLowerCase()}
               className="radio-button"
               type="radio"
-              name="radio"
+              name={name}
               value={option.value}
               checked={selectedOption === option.value}
               onChange={handleOptionChange}

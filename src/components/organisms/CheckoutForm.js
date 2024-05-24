@@ -106,6 +106,14 @@ export const CheckoutForm = () => {
     return color ? color.color_name : "";
   };
 
+  //lấy ra storage mà sản phẩm có
+  const getStorageName = (storageId) => {
+    const storage = isListProduct?.storage?.find(
+      (item) => item.storage_capacity_id === storageId
+    );
+    return storage ? storage.total_capacity : "";
+  };
+
   //lấy ra price
   const getPrice = (colorId) => {
     if (isListProduct && isListProduct.data) {
@@ -456,7 +464,7 @@ export const CheckoutForm = () => {
       </div>
     </div>
   );
-
+console.log(isListProduct);
   const PushOrder = async () => {
     const dataSend = {
       customer_id: Number(IdCustomer),
@@ -480,6 +488,7 @@ export const CheckoutForm = () => {
         product_name: item.product_detail.product_name,
         product_price: getPrice(item.color_id),
         product_sales_quantity: item.product_quantity,
+        storage_capacity_id: item.storage_capacity_id
       })),
     };
     if (
@@ -525,7 +534,7 @@ export const CheckoutForm = () => {
       }
     }
   };
-
+console.log(isListProduct);
   return (
     <>
       <div className="line-top"></div>
@@ -577,6 +586,7 @@ export const CheckoutForm = () => {
             <tr className="border-b border-gray-300 ">
               <th className="px-4 py-2 text-center">NAME</th>
               <th className="px-4 py-2 text-center">COLOR</th>
+              <th className="px-4 py-2 text-center">STORAGE</th>
               <th className="px-4 py-2 text-center">QUANTITY</th>
               <th className="px-4 py-2 text-center">UNIT PRICE</th>
               <th className="px-4 py-2 text-center">DISCOUNT</th>
@@ -595,6 +605,7 @@ export const CheckoutForm = () => {
                     {TruncateText(item.product_detail.product_name, 50)}
                   </td>
                   <td className="px-4 py-2">{getColorName(item.color_id)}</td>
+                  <td className="px-4 py-2">{getStorageName(item.storage_capacity_id)}</td>
                   <td className="px-4 py-2">{item.product_quantity}</td>
                   <td className="px-4 py-2">
                     {FormatPrice(filteredProductColors[0].product_price)}
