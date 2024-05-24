@@ -29,6 +29,7 @@ export const ProductDetail = () => {
   const [relatedProduct, setRelatedProduct] = useState();
   const [listGalleries, setListGalleries] = useState();
   const [selectedColor, setSelectedColor] = useState();
+  const [selectedStorage, setSelectedStorage] = useState();
 
   const { setBreadcrumb, setLoad } = useContext(AuthContext);
 
@@ -62,12 +63,30 @@ export const ProductDetail = () => {
     return color ? color.color_name : "";
   };
 
+   //lấy ra storage mà sản phẩm có
+   const getStorageName = (storageId) => {
+    const storage = detailProduct?.storage?.find(
+      (item) => item.storage_capacity_id === storageId
+    );
+    return storage ? storage.total_capacity : "";
+  };
+
+  // console.log(detailProduct);
+
   const colorNames = detailProduct?.data?.product_colors?.map((item) =>
     getColorName(item.color_id)
   );
   const dataColors = colorNames?.map((item, index) => ({
     label: item,
     value: String(detailProduct?.data?.product_colors[index].color_id),
+  }));
+
+  const storageNames = detailProduct?.data?.product_storage?.map((item) =>
+    getStorageName(item.storage_capacity_id)
+  );
+  const dataStorage = storageNames?.map((item, index) => ({
+    label: item,
+    value: String(detailProduct?.data?.product_storage[index].storage_capacity_id),
   }));
 
   // lấy ra quantity với màu đã chọn
@@ -83,6 +102,7 @@ export const ProductDetail = () => {
       setDetailProduct(dataDetail);
       setBreadcrumb(dataDetail?.data.product_name);
       setSelectedColor(String(dataDetail?.data.product_colors[0].color_id));
+      setSelectedStorage(String(dataDetail?.data.product_storage[0].storage_capacity_id))
     };
     const fetchGalleries = async () => {
       const dataGalleries = await GetGalleries({ product_id: params.id });
@@ -125,6 +145,7 @@ export const ProductDetail = () => {
             product_id: params.id,
             color_id: Number(selectedColor),
             product_quantity: quantity,
+            storage_capacity_id: Number(selectedStorage)
           },
         ],
       };
@@ -145,6 +166,7 @@ export const ProductDetail = () => {
             product_id: params.id,
             color_id: Number(selectedColor),
             product_quantity: quantity,
+            storage_capacity_id: Number(selectedStorage)
           },
         ],
       };
@@ -175,7 +197,6 @@ export const ProductDetail = () => {
   useEffect(() => {
     setQuantity(1);
   }, [selectedColor]);
-console.log(detailProduct);
   return (
     <>
       <section className="pt-10 font-poppins dark:bg-gray-800">
@@ -239,7 +260,7 @@ console.log(detailProduct);
                     ) : null}
                   </p>
                 </div>
-                <div className="mb-6">
+                <div className="">
                   <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
                     System Specs :
                   </h2>
@@ -287,12 +308,12 @@ console.log(detailProduct);
                               </span>
                               <div>
                                 <p className=" text-sm font-medium text-gray-500 dark:text-gray-400">
-                                  Hard Drive
+                                  Operating system
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
                                   {
                                     detailProduct?.data.product_detail
-                                      ?.hard_drive
+                                      ?.operating_system
                                   }
                                 </h2>
                               </div>
@@ -309,8 +330,8 @@ console.log(detailProduct);
                                 </p>
                                 <h2 className="text-base font-semibold text-gray-700 dark:text-gray-400">
                                   {detailProduct?.data.product_detail
-                                    ?.product_card
-                                    ? `${detailProduct?.data.product_detail?.product_card} h`
+                                    ?.product_pin
+                                    ? `${detailProduct?.data.product_detail?.product_pin} h`
                                     : ""}
                                 </h2>
                               </div>
@@ -321,6 +342,17 @@ console.log(detailProduct);
                     </div>
                   </div>
                 </div>
+                <div className="py-6 border-t border-gray-200 dark:border-gray-700">
+                  <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
+                  Storage Capacity:
+                  </h2>
+                  <RadioGroupForm
+                    options={dataStorage}
+                    selectedOption={selectedStorage}
+                    setSelectedOption={setSelectedStorage}
+                    name='storage'
+                  />
+                </div>
                 <div className="py-6 mb-6 border-t border-b border-gray-200 dark:border-gray-700">
                   <h2 className="mb-2 text-lg font-bold text-gray-700 dark:text-gray-400">
                     Color:
@@ -329,6 +361,7 @@ console.log(detailProduct);
                     options={dataColors}
                     selectedOption={selectedColor}
                     setSelectedOption={setSelectedColor}
+                    name='color'
                   />
                 </div>
                 <div className="flex flex-wrap items-center justify-start gap-10 mb-6">

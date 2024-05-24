@@ -48,6 +48,7 @@ const Product = ({ data }) => {
               product_id: data.product_id,
               color_id: filteredDataColor[0].color_id,
               product_quantity: 1,
+              storage_capacity_id: data.product_storage[0].storage_capacity_id,
             },
           ],
         };

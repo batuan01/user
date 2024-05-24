@@ -107,7 +107,9 @@ const SERVICES = {
 
   /* <COUPON> */
   getAllCoupon: (payload) => mainRequest(`/allCoupon/`, payload, "get"),
+  getRandomCoupon: (payload) => mainRequest(`/randomCoupon/`, payload, "get"),
 
+  /* <VNPAY> */
   postVNPay: (payload) => mainRequest(`/vnpay-payment/`, payload, "post"),
   getCouponBycode: (payload) => mainRequest(`/couponByCode/`, payload, "get"),
 
