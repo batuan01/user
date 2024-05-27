@@ -35,7 +35,7 @@ const Product = ({ data }) => {
   const filteredDataColor = data.product_colors.filter(
     (item) => item.quantity > 0
   );
-  const { isShowLogin, setIsShowLogin } = useContext(AuthContext);
+  const { isShowLogin, setIsShowLogin, loadTotalCart, setLoadTotalCart } = useContext(AuthContext);
 
   const handleBuyNow = async () => {
     try {
@@ -48,11 +48,13 @@ const Product = ({ data }) => {
               product_id: data.product_id,
               color_id: filteredDataColor[0].color_id,
               product_quantity: 1,
+              storage_capacity_id: data.product_capacity[0].storage_capacity_id,
             },
           ],
         };
 
         await BuyProduct(buyData);
+        setLoadTotalCart(!loadTotalCart);
         Notification.success("Add to cart successfully!");
       } else {
         Notification.error("Please log in to purchase!");

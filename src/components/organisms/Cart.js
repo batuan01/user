@@ -22,7 +22,8 @@ export const Cart = () => {
   const [isListProduct, setIsListProduct] = useState([]);
   const [productUpdate, setProductUpdate] = useState([]);
   const [quantity, setQuantity] = useState();
-  const { setBreadcrumb, setLoad } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad, loadTotalCart, setLoadTotalCart } =
+    useContext(AuthContext);
 
   const [reload, setReload] = useState(true);
 
@@ -101,6 +102,7 @@ export const Cart = () => {
     };
     setLoad(true);
     await DeleteProductCart(payload);
+    setLoadTotalCart(!loadTotalCart);
     setReload(!reload);
     router.push("/cart/?delete=" + product_id);
     Notification.success("Delete successfully!");
@@ -113,10 +115,12 @@ export const Cart = () => {
         product_id: item.product_id,
         product_quantity: item.product_quantity,
         color_id: item.color_id,
+        storage_capacity_id: item.storage_capacity_id,
       })),
     };
     if (payload.product_update.length > 0) {
       await UpdateProductCart(payload);
+      setLoadTotalCart(!loadTotalCart)
     }
     Notification.success("Updated quantity successfully!");
   };
@@ -127,6 +131,14 @@ export const Cart = () => {
       (item) => item.color_id === colorId
     );
     return color ? color.color_name : "";
+  };
+
+  //lấy ra storage mà sản phẩm có
+  const getStorageName = (storageId) => {
+    const storage = isListProduct?.storage?.find(
+      (item) => item.storage_capacity_id === storageId
+    );
+    return storage ? storage.total_capacity : "";
   };
 
   //table checkbox//
@@ -158,7 +170,6 @@ export const Cart = () => {
       )
     );
   };
-
 
   const renderItems = [];
 
@@ -193,7 +204,6 @@ export const Cart = () => {
     const checkedIds = checkedRows.map((item) => item.id);
     return checkedIds;
   };
-
 
   return (
     <>
@@ -231,6 +241,9 @@ export const Cart = () => {
                       </p>
                       <p className="text-[#8e8e8e] font-bold text-xs py-1">
                         {getColorName(item.color_id)}
+                      </p>
+                      <p className="text-[#8e8e8e] font-bold text-xs py-1">
+                        {getStorageName(item.storage_capacity_id)}
                       </p>
                     </div>
                     <div className="col-span-2">

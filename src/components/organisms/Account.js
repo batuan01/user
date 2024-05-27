@@ -67,7 +67,10 @@ export const Account = () => {
       customer_phone: dataInfo?.customer_phone,
     });
     if (dataInfo) {
-      setSelectedFilesInfo([dataInfo?.customer_image]);
+      setSelectedFilesInfo([
+        dataInfo?.customer_image ??
+          "https://t4.ftcdn.net/jpg/05/49/98/39/360_F_549983970_bRCkYfk0P6PP5fKbMhZMIb07mCJ6esXL.jpg",
+      ]);
     }
   }, [dataInfo]);
 
@@ -111,6 +114,14 @@ export const Account = () => {
   const getColorName = (colorId) => {
     const color = dataOrder?.colors?.find((item) => item.color_id === colorId);
     return color ? color.color_name : "";
+  };
+
+  //lấy ra storage mà sản phẩm có
+  const getStorageName = (storageId) => {
+    const storage = dataOrder?.storage?.find(
+      (item) => item.storage_capacity_id === storageId
+    );
+    return storage ? storage.total_capacity : "";
   };
 
   const fineReason = (id) => {
@@ -165,7 +176,8 @@ export const Account = () => {
                         {TruncateText(detail.product_name, 50)}
                       </p>
                       <p className="text-sm font-medium mb-1">
-                        {getColorName(detail.color_id)}
+                        {getColorName(detail.color_id)} |{" "}
+                        {getStorageName(detail.storage_capacity_id)}
                       </p>
                       <p className="text-sm font-medium">
                         x{detail.product_sales_quantity}

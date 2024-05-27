@@ -234,6 +234,19 @@ export const UpdateProductCart = async (payload) => {
   }
 };
 
+export const GetCartTotalQuantity = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getCartTotalQuantity(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};
+
 /* <CATEGORY> */
 export const ListCategories = async () => {
   try {
@@ -393,6 +406,21 @@ export const GetCouponBycode = async (payload) => {
     console.error("Lỗi khi gọi API:", error);
   }
 };
+
+export const GetRandomCoupon = async (payload) => {
+  try {
+    const { data, status } = await SERVICES.getRandomCoupon(payload);
+    if (status === 200) {
+      return data;
+    } else {
+      logError(data);
+    }
+  } catch (error) {
+    console.error("Lỗi khi gọi API:", error);
+  }
+};
+
+/* <VNPAY> */
 
 export const PostVNPay = async (payload) => {
   try {

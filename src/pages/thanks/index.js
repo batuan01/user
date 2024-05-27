@@ -15,6 +15,7 @@ const ThankForPurchase = () => {
     const payload = {
       order_id: Number(query?.orderID),
       order_status: 2,
+      order_reason: 0
     };
     if (query.vnp_ResponseCode === "00") {
       PutOrderProduct(payload);

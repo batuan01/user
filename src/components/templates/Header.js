@@ -26,7 +26,7 @@ export const Header = () => {
   const storedIdCustomer = Cookies.get("id_customer");
   const [showMenu, setShowMenu] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
-  const { isShowLogin, setIsShowLogin, breadcrumb, setBreadcrumb } =
+  const { isShowLogin, setIsShowLogin, breadcrumb, totalProductCart } =
     useContext(AuthContext);
 
   const router = useRouter();
@@ -111,6 +111,9 @@ export const Header = () => {
 
             {/* Cart */}
             <div className="cursor-pointer" onClick={clickCart}>
+              <span className="absolute text-xs ml-[20px] -mt-[12px]">
+                {totalProductCart || 0}
+              </span>
               <FaShoppingCart className=" w-5 h-5" />
             </div>
 

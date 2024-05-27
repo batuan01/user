@@ -78,6 +78,7 @@ const SERVICES = {
     mainRequest(`/cart/customer/${payload.customer_id}/`, payload, "put"),
   deleteAllProductCart: (payload) =>
     mainRequest(`/cart/customer/${payload.customer_id}/`, payload, "delete"),
+  getCartTotalQuantity: (payload) => mainRequest(`/cart/total/${payload.id}/`, null, "get"),
 
   /* <CATEGORIES> */
   getCategories: (payload) => mainRequest(`/category/`, payload, "get"),
@@ -107,9 +108,11 @@ const SERVICES = {
 
   /* <COUPON> */
   getAllCoupon: (payload) => mainRequest(`/allCoupon/`, payload, "get"),
-
-  postVNPay: (payload) => mainRequest(`/vnpay-payment/`, payload, "post"),
+  getRandomCoupon: (payload) => mainRequest(`/randomCoupon/`, payload, "get"),
   getCouponBycode: (payload) => mainRequest(`/couponByCode/`, payload, "get"),
+
+  /* <VNPAY> */
+  postVNPay: (payload) => mainRequest(`/vnpay-payment/`, payload, "post"),
 
   /* <SLIDER> */
   getSliders: (payload) => mainRequest(`/allSliders/`, payload, "get"),

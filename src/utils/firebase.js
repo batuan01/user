@@ -31,7 +31,7 @@ export const ConvertFirebase = ({ images }) => {
 
     // Duyệt qua mảng ảnh và tải lên mỗi ảnh
     for (const image of images) {
-      const storageRef = ref(storage, `images/${image.name}`);
+      const storageRef = ref(storage, `images/${image?.name}`);
       await uploadBytes(storageRef, image);
 
       // Lấy đường dẫn đến ảnh đã tải lên
