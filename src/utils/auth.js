@@ -8,8 +8,29 @@ export const LoginCustomer = async (payload) => {
     const { data, status } = await SERVICES.loginCustomer(payload);
     if (status === 200) {
       Cookies.set("token", data.data.access_token);
-      const id_customer = data.data.customer.customer_id; 
+      const id_customer = data.data.customer.customer_id;
       Cookies.set("id_customer", id_customer);
+
+      const {
+        customer_id,
+        customer_address,
+        customer_fullname,
+        customer_image,
+        customer_name,
+        customer_phone,
+      } = data.data.customer;
+
+      const dataUser = {
+        customer_id: customer_id,
+        customer_address: customer_address,
+        customer_fullname: customer_fullname,
+        customer_image: customer_image,
+        customer_name: customer_name,
+        customer_phone: customer_phone,
+      };
+
+      let jsonString = JSON.stringify(dataUser);
+      Cookies.set("customer", jsonString);
       Notification.success("Success !");
     } else {
       logError(data);
@@ -24,8 +45,30 @@ export const SignupCustomer = async (payload) => {
     const { data, status } = await SERVICES.signupCustomer(payload);
     if (status === 201) {
       Cookies.set("token", data.data.access_token);
-      const id_customer = data.data.customer.customer_id; 
+      const id_customer = data.data.customer.customer_id;
       Cookies.set("id_customer", id_customer);
+
+      const {
+        customer_id,
+        customer_address,
+        customer_fullname,
+        customer_image,
+        customer_name,
+        customer_phone,
+      } = data.data.customer;
+
+      const dataUser = {
+        customer_id: customer_id,
+        customer_address: customer_address,
+        customer_fullname: customer_fullname,
+        customer_image: customer_image,
+        customer_name: customer_name,
+        customer_phone: customer_phone,
+      };
+
+      let jsonString = JSON.stringify(dataUser);
+      Cookies.set("customer", jsonString);
+
       Notification.success("Success !");
     } else {
       logError(data);
@@ -38,9 +81,30 @@ export const SignupCustomer = async (payload) => {
 export const SignupGoogle = async (payload) => {
   try {
     const { data, status } = await SERVICES.signupGoogle(payload);
-    if (status === 200) {
-      const id_customer = data.data.customer_id; 
+    if (status === 200 || status === 201) {
+      const id_customer = data.data.customer_id;
       Cookies.set("id_customer", id_customer);
+      const {
+        customer_id,
+        customer_address,
+        customer_fullname,
+        customer_image,
+        customer_name,
+        customer_phone,
+      } = data.data.customer;
+
+      const dataUser = {
+        customer_id: customer_id,
+        customer_address: customer_address,
+        customer_fullname: customer_fullname,
+        customer_image: customer_image,
+        customer_name: customer_name,
+        customer_phone: customer_phone,
+      };
+
+      let jsonString = JSON.stringify(dataUser);
+      Cookies.set("customer", jsonString);
+
       Notification.success("Success !");
     } else {
       logError(data);

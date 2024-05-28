@@ -216,7 +216,7 @@ export const Cart = () => {
             >
               <div className="flex items-center justify-between pb-10 mb-3 border-b-2">
                 <p className="font-bold text-3xl">Shopping Cart</p>
-                <p>{Math.abs(arraySum)} sản phẩm</p>
+                <p>{Math.abs(arraySum)} Products</p>
               </div>
               {isListProduct?.data?.map((item, index) => {
                 // lấy ra quantity với màu đã chọn

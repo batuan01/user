@@ -48,7 +48,8 @@ const shipping = [
   },
 ];
 export const CheckoutForm = () => {
-  const { setBreadcrumb, setLoad } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad, loadTotalCart, setLoadTotalCart } =
+    useContext(AuthContext);
   const [isListProduct, setIsListProduct] = useState([]);
   const [dataCoupon, setDataCoupon] = useState(0);
   const [dataInputCoupon, setDataInputCoupon] = useState();
@@ -66,6 +67,13 @@ export const CheckoutForm = () => {
   const [allWards, setAllWards] = useState();
 
   const [selectedShipping, setSelectedShipping] = useState(shipping[0]);
+
+  const customer = Cookies.get("customer");
+
+  let objCustomer;
+  if (customer) {
+    objCustomer = JSON.parse(customer);
+  }
 
   const {
     register,
@@ -472,14 +480,18 @@ export const CheckoutForm = () => {
       order_status: 1,
       payment_id: Number(selectedOption),
       shipping_info: {
-        shipping_name: value.shipping_name,
-        shipping_address: `${
-          value.specific_address ? `${value.specific_address}, ` : ""
-        } ${value.ward?.name}, ${value.district?.name}, ${
-          value.province?.name
-        }`,
-        shipping_phone: value.shipping_phone,
-        shipping_notes: value.notes,
+        shipping_name: selectedWards
+          ? value.shipping_name
+          : objCustomer?.customer_fullname,
+        shipping_address: selectedWards
+          ? `${value.specific_address ? `${value.specific_address}, ` : ""} ${
+              value.ward?.name
+            }, ${value.district?.name}, ${value.province?.name}`
+          : objCustomer?.customer_address,
+        shipping_phone: selectedWards
+          ? value.shipping_phone
+          : objCustomer?.customer_phone,
+        shipping_notes: value.notes || "",
       },
       order_detail: isListProduct?.data?.map((item) => ({
         product_id: item.product_detail.product_id,
@@ -493,7 +505,8 @@ export const CheckoutForm = () => {
     };
     if (
       !dataSend.shipping_info.shipping_name ||
-      !dataSend.shipping_info.shipping_phone
+      !dataSend.shipping_info.shipping_phone ||
+      !dataSend.shipping_info.shipping_address
     ) {
       Notification.error("Please enter complete information!");
     } else {
@@ -502,6 +515,7 @@ export const CheckoutForm = () => {
         customer_id: dataSend.customer_id,
       };
       await DeleteAllProductCart(payload);
+      setLoadTotalCart(!loadTotalCart);
       Notification.success("Order successfully!");
       return result.data.order_id;
     }
@@ -545,7 +559,9 @@ export const CheckoutForm = () => {
         </div>
         <div className="flex gap-10 items-center mt-5">
           <ButtonModal
-            title={selectedWards ? "Update" : "Add"}
+            title={
+              selectedWards || objCustomer?.customer_address ? "Update" : "Add"
+            }
             type={"button"}
             sizeSm={true}
             onClick={() => setIsOpenAddress(true)}
@@ -555,19 +571,30 @@ export const CheckoutForm = () => {
             }
             icon={<FaPlusCircle />}
           />
+
           {selectedWards ? (
             <div>
-              <p>
+              <div>
                 <span className="font-semibold">{value.shipping_name}</span> |
                 <span className="ml-1">{value.shipping_phone}</span>
-              </p>
+              </div>
               <p>{value.specific_address}</p>
               <p>
                 {value.ward?.name}, {value.district?.name},
                 {value.province?.name}
               </p>
             </div>
-          ) : null}
+          ) : (
+            <div>
+              <div>
+                <span className="font-semibold">
+                  {objCustomer?.customer_fullname}
+                </span>
+                <span className="ml-1"> {objCustomer?.customer_phone}</span>
+              </div>
+              <p>{objCustomer?.customer_address}</p>
+            </div>
+          )}
         </div>
         <Modal
           isOpen={isOpenAddress}

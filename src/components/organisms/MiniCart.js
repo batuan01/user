@@ -81,7 +81,7 @@ export const MiniCart = ({ content }) => {
                   src="https://taphoa.cz/static/media/cart-empty-img.8b677cb3.png"
                   className="w-[80%]"
                 />
-                <p>Không có sản phẩm nào</p>
+                <p>No product</p>
               </div>
             )}
           </div>

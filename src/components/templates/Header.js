@@ -111,9 +111,11 @@ export const Header = () => {
 
             {/* Cart */}
             <div className="cursor-pointer" onClick={clickCart}>
-              <span className="absolute text-xs ml-[20px] -mt-[12px]">
-                {totalProductCart || 0}
-              </span>
+              {storedIdCustomer ? (
+                <span className="absolute text-xs ml-[20px] -mt-[12px]">
+                  {totalProductCart || 0}
+                </span>
+              ) : null}
               <FaShoppingCart className=" w-5 h-5" />
             </div>
 

@@ -21,6 +21,7 @@ import { TruncateText } from "../atoms/TruncateText";
 import Link from "next/link";
 import { FaArrowRightFromBracket } from "react-icons/fa6";
 import { ReasonForCancellation } from "../../constants/common";
+import { RiCoupon3Fill } from "react-icons/ri";
 
 export const Account = () => {
   const { setLoad, setBreadcrumb } = useContext(AuthContext);
@@ -65,6 +66,7 @@ export const Account = () => {
     reset({
       customer_fullname: dataInfo?.customer_fullname,
       customer_phone: dataInfo?.customer_phone,
+      customer_address: dataInfo?.customer_address,
     });
     if (dataInfo) {
       setSelectedFilesInfo([
@@ -260,16 +262,46 @@ export const Account = () => {
       customer_phone: data.customer_phone || "",
       customer_fullname: data.customer_fullname || "",
       customer_image: urlInfo[0] || "",
+      customer_address: String(data.customer_address) || "",
     };
-    await UpdateCustomer(dataSend);
+
+    Cookies.remove("customer");
+    const customer = await UpdateCustomer(dataSend);
+
+    const {
+      customer_id,
+      customer_address,
+      customer_fullname,
+      customer_image,
+      customer_name,
+      customer_phone,
+    } = customer.data;
+
+    const dataUser = {
+      customer_id: customer_id,
+      customer_address: customer_address,
+      customer_fullname: customer_fullname,
+      customer_image: customer_image,
+      customer_name: customer_name,
+      customer_phone: customer_phone,
+    };
+
+    let jsonString = JSON.stringify(dataUser);
+    Cookies.set("customer", jsonString);
+
     setLoad(false);
     Notification.success("Create slider successfully!");
     setIsReload(!isReload);
   };
 
+  const Coupon = () => {
+    router.push("/coupon");
+  };
+
   const Signout = () => {
     Cookies.remove("token");
     Cookies.remove("id_customer");
+    Cookies.remove("customer");
     router.push("/");
   };
 
@@ -303,6 +335,13 @@ export const Account = () => {
               >
                 <FcSurvey className="w-7 h-7" />
                 <span>Purchase Order</span>
+              </li>
+              <li
+                className="flex items-center gap-4 mt-3 cursor-pointer bg-slate-300 p-2 rounded-md"
+                onClick={Coupon}
+              >
+                <RiCoupon3Fill className="w-5 h-5" />
+                <span>Coupon</span>
               </li>
               <li
                 className="flex items-center gap-4 mt-3 cursor-pointer bg-slate-300 p-2 rounded-md"
@@ -434,6 +473,18 @@ export const Account = () => {
                         placeholder={"Customer phone"}
                         errors={errors}
                         name={"customer_phone"}
+                      />
+                    </div>
+                  </div>
+                  <div className="flex gap-5 items-center my-2">
+                    <p className="w-[150px] text-right">Address</p>
+                    <div className="flex-grow">
+                      <InputFormUser
+                        register={register("customer_address")}
+                        type="text"
+                        placeholder={"Customer address"}
+                        errors={errors}
+                        name={"customer_address"}
                       />
                     </div>
                   </div>

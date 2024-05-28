@@ -1,12 +1,13 @@
 import { useForm } from "react-hook-form";
 import { Facebook, Google } from "../atoms/Icon";
 import { InputForm } from "../atoms/Input";
-import { useState } from "react";
+import { useContext, useState } from "react";
 
 import { AiOutlineClose } from "react-icons/ai";
 import { LoginCustomer, SignupCustomer, SignupGoogle } from "../../utils/auth";
 import { useRouter } from "next/router";
 import { handleGoogleSignUp } from "../../utils/firebase";
+import { AuthContext } from "../contexts/AuthContext";
 
 export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
   const router = useRouter();
@@ -17,6 +18,7 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
   } = useForm();
 
   const [create, setCreate] = useState(false);
+  const { loadTotalCart, setLoadTotalCart } = useContext(AuthContext);
 
   const handleLogin = async (d) => {
     const loginData = {
@@ -25,6 +27,7 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
     };
     try {
       await LoginCustomer(loginData);
+      setLoadTotalCart(!loadTotalCart);
       setIsShowLogin(false);
     } catch (error) {
       console.log(error);
@@ -39,6 +42,7 @@ export const LoginForm = ({ isShowLogin, setIsShowLogin }) => {
     };
     try {
       await SignupCustomer(signupData);
+      setLoadTotalCart(!loadTotalCart);
       setIsShowLogin(false);
       setCreate(false);
     } catch (error) {
