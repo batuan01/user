@@ -24,7 +24,7 @@ export const ContactForm = () => {
           <div>
             <p className="mt-8 text-xl font-semibold">Address</p>
             <p className="mt-2 text-gray-600">
-              1234 Street Name, City Name, United States
+              Số 298 Đ. Cầu Diễn, Minh Khai, Bắc Từ Liêm, Hà Nội, Việt Nam
             </p>
           </div>
           <div>

@@ -22,6 +22,7 @@ import { useRouter } from "next/router";
 import { RadioGroupForm } from "../atoms/RadioGroup";
 import { TruncateText } from "../atoms/TruncateText";
 import { CgSmartphoneRam } from "react-icons/cg";
+import { Disclosure } from "@headlessui/react";
 
 export const ProductDetail = () => {
   const [quantity, setQuantity] = useState(1);
@@ -31,7 +32,8 @@ export const ProductDetail = () => {
   const [selectedColor, setSelectedColor] = useState();
   const [selectedStorage, setSelectedStorage] = useState();
 
-  const { setBreadcrumb, setLoad,loadTotalCart, setLoadTotalCart } = useContext(AuthContext);
+  const { setBreadcrumb, setLoad, loadTotalCart, setLoadTotalCart } =
+    useContext(AuthContext);
 
   const router = useRouter();
   const params = router.query;
@@ -153,7 +155,7 @@ export const ProductDetail = () => {
         ],
       };
 
-      setLoadTotalCart(!loadTotalCart)
+      setLoadTotalCart(!loadTotalCart);
       await BuyProduct(buyData);
       Notification.success("Add to cart successfully!");
     } else {
@@ -174,13 +176,13 @@ export const ProductDetail = () => {
           },
         ],
       };
-      setLoadTotalCart(!loadTotalCart)
+      setLoadTotalCart(!loadTotalCart);
       await BuyProduct(buyData);
       Notification.success("Add to cart successfully!");
+      router.push("/cart");
     } else {
       Notification.error("Please log in to purchase!");
     }
-    router.push("/cart");
   };
 
   const getPrice = (colorId) => {
@@ -398,12 +400,8 @@ export const ProductDetail = () => {
                   </button>
                 </div>
               </div>
-              <div
-                className="py-10 pl-[70px]"
-                dangerouslySetInnerHTML={{
-                  __html: detailProduct?.data.product_content,
-                }}
-              ></div>
+
+              <MyDisclosure content={detailProduct?.data.product_content} />
             </form>
           </div>
         </div>
@@ -467,3 +465,32 @@ const ProcessorIcon = () => {
     </svg>
   );
 };
+
+function MyDisclosure({ content }) {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  const shortText = content?.slice(0, 200);
+
+  return (
+    <div className="w-full p-2 pl-[55px]">
+      <Disclosure>
+        {({ open }) => (
+          <>
+            <div
+              className="pl-7 py-2 text-sm text-gray-500 text-justify"
+              dangerouslySetInnerHTML={{
+                __html: isExpanded ? content : `${shortText}...`,
+              }}
+            ></div>
+            <Disclosure.Button
+              className="px-4 py-2 mt-2 ml-7 text-sm font-medium text-purple-900 bg-purple-100 rounded-lg hover:bg-purple-200 focus:outline-none focus-visible:ring focus-visible:ring-purple-500 focus-visible:ring-opacity-75"
+              onClick={() => setIsExpanded(!isExpanded)}
+            >
+              {isExpanded ? "Read Less" : "Read More"}
+            </Disclosure.Button>
+          </>
+        )}
+      </Disclosure>
+    </div>
+  );
+}

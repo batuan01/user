@@ -9,7 +9,10 @@ export const Footer = () => {
           <div className="grid grid-cols-1 gap-8 lg:grid-cols-3">
             <div>
               <div className="flex justify-center">
-                <img src="https://firebasestorage.googleapis.com/v0/b/kenta-71006.appspot.com/o/images%2Flogo.png?alt=media&token=d5a22294-5af9-4163-b1bc-7619b29dfbdd" className="w-40" />
+                <img
+                  src="https://firebasestorage.googleapis.com/v0/b/kenta-71006.appspot.com/o/images%2Flogo.png?alt=media&token=d5a22294-5af9-4163-b1bc-7619b29dfbdd"
+                  className="w-40"
+                />
               </div>
 
               <p className="mt-4 text-gray-500 text-center">
@@ -70,17 +73,16 @@ export const Footer = () => {
               </div>
 
               <div>
-                <p className="font-semibold text-gray-900">Company</p>
+                <p className="font-semibold text-gray-900">Sales</p>
 
                 <ul className="mt-6 space-y-4 text-sm">
                   <li>
-                    <a
-                      href="#"
+                    <Link
+                      href={"/coupon"}
                       className="text-gray-700 transition hover:opacity-75"
                     >
-                      {" "}
-                      About{" "}
-                    </a>
+                      Coupons
+                    </Link>
                   </li>
                 </ul>
               </div>

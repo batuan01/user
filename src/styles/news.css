@@ -61,6 +61,7 @@
   backface-visibility: hidden;
   position: relative;
   z-index: -1;
+  object-fit: cover;
 }
 
 .news-card__text-wrapper {
